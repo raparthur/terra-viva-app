@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Log.d(TAG, "onClick: clicked on a category: " + mNames.get(position));
                 tv_titulo = activity_view.findViewById(R.id.tv_titulo);
                 tv_titulo.setText(mNames.get(position));
-                manager.getProdutos(mIds.get(position));
+                manager.getProdutosCateg(mIds.get(position));
             }
         });
     }

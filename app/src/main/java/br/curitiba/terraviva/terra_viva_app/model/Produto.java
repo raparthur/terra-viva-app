@@ -1,6 +1,8 @@
 package br.curitiba.terraviva.terra_viva_app.model;
 
-public class Produto {
+import android.support.annotation.NonNull;
+
+public class Produto implements Comparable {
     private int id;
     private String nome;
     private String curta;
@@ -96,5 +98,17 @@ public class Produto {
 
     public void setEstoque(int estoque) {
         this.estoque = estoque;
+    }
+
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        if(o instanceof Produto){
+            if(this.valor >((Produto) o).getValor())
+                return 1;
+            if(this.valor < ((Produto) o).getValor())
+                return -1;
+        }
+        return 0;
     }
 }

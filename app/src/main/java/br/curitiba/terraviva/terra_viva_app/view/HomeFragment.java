@@ -6,19 +6,35 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import br.curitiba.terraviva.terra_viva_app.R;
+import br.curitiba.terraviva.terra_viva_app.adapter.ProdAdapter;
 import br.curitiba.terraviva.terra_viva_app.connexion.JSONManager;
+import br.curitiba.terraviva.terra_viva_app.model.Produto;
+
+import static java.util.Collections.sort;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
 
+    private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
     private View view;
+    private JSONManager manager;
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -28,26 +44,21 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);//Inflate Layout
-        JSONManager manager = new JSONManager(getContext(), getActivity(), view);
+        manager = new JSONManager(getContext(), getActivity(), view);
 
-        Spinner dropdown = view.findViewById(R.id.dropdown);
+        Spinner subcategs = view.findViewById(R.id.dropdown);
+        Spinner ordenar = view.findViewById(R.id.ordenar);
+
+        String[] orders = {"Nome (todos)","Maior valor","Menor valor","Indisponíveis"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_checked, orders);
+        ordenar.setAdapter(adapter);
+
         TextView tv_subcateg = view.findViewById(R.id.tv_subcateg);
 
-        dropdown.setVisibility(View.GONE);
+        subcategs.setVisibility(View.GONE);
         tv_subcateg.setVisibility(View.GONE);
 
-        //create a list of items for the spinner.
-        String[] items = new String[]{"TODAS"};
-        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
-        //There are multiple variations of this, but this is the basic variant.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_checked, items);
-        //set the spinners adapter to the previously created one.
-        dropdown.setAdapter(adapter);
-
-        //show
-        dropdown.setVisibility(View.VISIBLE);
-        tv_subcateg.setVisibility(View.VISIBLE);
-
+        //inicio de tudo
         manager.getCategorias();
 
         return view;
@@ -56,5 +67,4 @@ public class HomeFragment extends Fragment {
     public View getView(){
         return view;
     }
-
 }

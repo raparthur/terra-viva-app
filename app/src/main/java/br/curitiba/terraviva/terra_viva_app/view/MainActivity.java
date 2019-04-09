@@ -129,9 +129,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_home) {
 
-           getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.frame_container, new HomeFragment()).commit();
+           getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new HomeFragment()).commit();
 
         } else if (id == R.id.nav_subscribe) {
 
