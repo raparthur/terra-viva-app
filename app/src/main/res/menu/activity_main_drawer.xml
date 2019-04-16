@@ -3,24 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_lock"
-            android:icon="@drawable/ic_menu_lock"
-            android:title="SAIR" />
+    <group android:checkableBehavior="single"
+        android:id="@+id/group_sign_in">
         <item
             android:id="@+id/nav_in"
-            android:icon="@drawable/ic_menu_acc"
+            android:icon="@drawable/ic_login"
             android:title="ENTRAR" />
         <item
+            android:id="@+id/nav_out"
+            android:icon="@drawable/ic_logout"
+            android:title="SAIR" />
+    </group>
+    <group android:checkableBehavior="single"
+        android:id="@+id/group_navigation">
+        <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_home"
+            android:icon="@drawable/ic_home"
             android:title="HOME" />
         <item
-            android:id="@+id/nav_subscribe"
-            android:icon="@drawable/ic_menu_add"
+            android:id="@+id/nav_register"
+            android:icon="@drawable/ic_register"
             android:title="CADASTRE-SE" />
-
+        <item
+            android:id="@+id/nav_cart"
+            android:icon="@drawable/ic_cart"
+            android:title="CARRINHO" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_profile"
+            android:title="MEU PERFIL" />
     </group>
+
 
 </menu>

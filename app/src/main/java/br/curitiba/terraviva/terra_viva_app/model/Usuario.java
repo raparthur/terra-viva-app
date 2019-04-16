@@ -1,8 +1,12 @@
 package br.curitiba.terraviva.terra_viva_app.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class Usuario {
+public class Usuario implements Serializable {
+
     private String email;
     private String nome;
     private Date nasc;
@@ -15,22 +19,6 @@ public class Usuario {
     private String cidade;
     private String uf;
 
-    public Usuario(String email, String nome, Date nasc, String cpf, String senha, String rua, String num, String compl, String bairro, String cidade, String uf) {
-        this.email = email;
-        this.nome = nome;
-        this.nasc = nasc;
-        this.cpf = cpf;
-        this.senha = senha;
-        this.rua = rua;
-        this.num = num;
-        this.compl = compl;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.uf = uf;
-    }
-
-    public Usuario() {
-    }
 
     public String getEmail() {
         return email;
@@ -118,5 +106,11 @@ public class Usuario {
 
     public void setUf(String uf) {
         this.uf = uf;
+    }
+
+
+    @Override
+    public String toString(){
+        return "Bem vindo, "+this.nome;
     }
 }

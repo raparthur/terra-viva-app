@@ -29,7 +29,7 @@
         app:srcCompat="@drawable/logo3" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_welcome"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -43,13 +43,13 @@
         tools:paddingTop="0dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_instructions"
         android:layout_width="wrap_content"
         android:layout_height="54dp"
         android:layout_marginTop="8dp"
         android:text="Entre para acessar seu carrinho e efetuar compras ou pagamentos"
         android:textColor="#8b4513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome" />
 
 </android.support.constraint.ConstraintLayout>

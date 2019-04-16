@@ -2,7 +2,9 @@ package br.curitiba.terraviva.terra_viva_app.model;
 
 import android.support.annotation.NonNull;
 
-public class Produto implements Comparable {
+import java.io.Serializable;
+
+public class Produto implements Comparable,Serializable {
     private int id;
     private String nome;
     private String curta;

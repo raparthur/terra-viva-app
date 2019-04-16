@@ -1,9 +1,11 @@
 package br.curitiba.terraviva.terra_viva_app.connexion;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +17,25 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.adapter.ProdAdapter;
-import br.curitiba.terraviva.terra_viva_app.adapter.RecyclerViewAdapter;
+import br.curitiba.terraviva.terra_viva_app.Session;
+import br.curitiba.terraviva.terra_viva_app.adapter.ListCell;
+import br.curitiba.terraviva.terra_viva_app.adapter.RecyclerView;
 import br.curitiba.terraviva.terra_viva_app.model.Categoria;
+import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import br.curitiba.terraviva.terra_viva_app.model.Subcateg;
+import br.curitiba.terraviva.terra_viva_app.model.Usuario;
+import br.curitiba.terraviva.terra_viva_app.view.DetailsActivity;
+import br.curitiba.terraviva.terra_viva_app.view.HomeActivity;
 
-public class JSONManager {
+public class JsonHomeManager {
     private Volley volley;
     private List<Produto> produtos;
     private List<Categoria> categorias;
@@ -44,29 +49,25 @@ public class JSONManager {
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<Integer> mIds = new ArrayList<>();
-    private View view;
     private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
     private static final String TAG = "HomeFragment";
     private Categoria selectedCateg;
     private ImageView banner;
 
-
-    public JSONManager(final Context ctx, Activity activity, View view) {
+    public JsonHomeManager(final Context ctx,Activity activity) {
         this.ctx = ctx;
         this.activity = activity;
-        this.view = view;
-        tv_titulo = view.findViewById(R.id.tv_titulo);
-        dropdown = view.findViewById(R.id.dropdown);
-        orderer = view.findViewById(R.id.ordenar);
-        tv_subcateg = view.findViewById(R.id.tv_subcateg);
+        tv_titulo = activity.findViewById(R.id.tv_titulo);
+        dropdown = activity.findViewById(R.id.dropdown);
+        orderer = activity.findViewById(R.id.ordenar);
+        tv_subcateg = activity.findViewById(R.id.tv_subcateg);
         selectedCateg = new Categoria();
-        banner = view.findViewById(R.id.imageView2);
-
+        banner = activity.findViewById(R.id.imageView2);
     }
 
 
    public void getCategorias(){
-       volley = new Volley(ctx,"https://terraviva.curitiba.br/api/categorias");
+       volley = new Volley(ctx,"https://terraviva.curitiba.br/api/categorias",activity);
        String[] items = {"id","nome","img"};
        volley.getRequest(items, new VolleyCallback() {
            @Override
@@ -92,7 +93,7 @@ public class JSONManager {
    }
 
     private void getSubCategorias(final int categoria){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/subcategorias/"+categoria);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/subcategorias/"+categoria,activity);
         String[] items = {"id","nome"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -156,7 +157,7 @@ public class JSONManager {
     }
 
     public void getDestaques(){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/destaques");
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/destaques",activity);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -174,6 +175,7 @@ public class JSONManager {
                             p.setCurta(hash.get("desc_curta"));
                             p.setLonga(hash.get("desc_longa"));
                             p.setValor(Float.parseFloat(hash.get("valor")));
+                            p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
@@ -240,7 +242,7 @@ public class JSONManager {
 
     public void getProdutosCateg(final int id_categoria){
 
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_categ/"+id_categoria);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_categ/"+id_categoria,activity);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -257,6 +259,7 @@ public class JSONManager {
                             p.setCurta(hash.get("desc_curta"));
                             p.setLonga(hash.get("desc_longa"));
                             p.setValor(Float.parseFloat(hash.get("valor")));
+                            p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
@@ -330,7 +333,7 @@ public class JSONManager {
 
     private void getProdutosSubcat(final Subcateg subcateg){
         tv_titulo.setText(selectedCateg.getNome());
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_subcat/"+subcateg.getId());
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_subcat/"+subcateg.getId(),activity);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -346,6 +349,7 @@ public class JSONManager {
                             p.setCurta(hash.get("desc_curta"));
                             p.setLonga(hash.get("desc_longa"));
                             p.setValor(Float.parseFloat(hash.get("valor")));
+                            p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
@@ -413,7 +417,7 @@ public class JSONManager {
     }
 
     public void getProdutosPesquisa(final String termo){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/pesquisa/"+termo);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/pesquisa/"+termo,activity);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -430,6 +434,7 @@ public class JSONManager {
                             p.setCurta(hash.get("desc_curta"));
                             p.setLonga(hash.get("desc_longa"));
                             p.setValor(Float.parseFloat(hash.get("valor")));
+                            p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
@@ -521,8 +526,8 @@ public class JSONManager {
                 i++;
             }
         }
-        ProdAdapter adapter = new ProdAdapter(activity,nomes,curtas,valores,images);
-        list = view.findViewById(R.id.lv_prod);
+        ListCell adapter = new ListCell(activity,nomes,curtas,valores,images);
+        list = activity.findViewById(R.id.lv_prod);
         list.setAdapter(adapter);
 
         //definir tamanho listview
@@ -531,17 +536,99 @@ public class JSONManager {
         list.setLayoutParams(lp);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ctx,"Id:  "+produtos.get(position).getId(),Toast.LENGTH_SHORT).show();
+
+                Bundle data = new Bundle();//Use bundle to pass data
+                data.putSerializable("produto", produtos.get(position));
+                Intent it = new Intent(ctx,DetailsActivity.class);
+                it.putExtras(data);
+                activity.startActivity(it);
+
+            }
+        });
+    }
+
+    public void getEstoque(final Produto produto){
+        Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId(),activity);
+        String[] items = {"estoque"};
+        volley.getRequest(items, new VolleyCallback() {
+            @Override
+            public void onSuccess(ArrayList<HashMap<String, String>> response) {
+                if (response.size() > 0) {
+                    produto.setEstoque(Integer.parseInt(response.get(0).get("estoque")));
+                }
+            }
+        });
+    }
+
+    public void atualizaCarrinho(){
+        final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
+        String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
+        volley.getRequest(items, new VolleyCallback() {
+
+            @Override
+            public void onSuccess(ArrayList<HashMap<String, String>> response) {
+                if(response.size() > 0){
+                    List<Compra> compras = new ArrayList<>();
+                    for (HashMap<String,String> hash : response) {
+
+                        Produto p = new Produto();
+                        p.setId(Integer.parseInt(hash.get("produto")));
+                        p.setCateg(Integer.parseInt(hash.get("subcateg")));
+                        p.setNome(hash.get("nome"));
+                        p.setCurta(hash.get("desc_curta"));
+                        p.setLonga(hash.get("desc_longa"));
+                        p.setValor(Float.parseFloat(hash.get("valor")));
+                        p.setEstoque(Integer.parseInt(hash.get("estoque")));
+                        p.setImg(hash.get("img"));
+
+
+                        Compra c = new Compra();
+                        c.setId(Integer.parseInt(hash.get("compra")));
+                        c.setProduto(p);
+                        c.setQtd(Integer.parseInt(hash.get("qtd")));
+                        c.setUsuario(Session.usuario.getEmail());
+                        compras.add(c);
+                    }
+                    Session.compras = compras;
+                    /*if(produtoPreviamentestado){
+                        Intent it = activity.getIntent();
+                        if(it != null){
+                            Bundle extras = it.getExtras();
+                            if(extras != null){
+                                boolean estaNocarrinho = false;
+                                for (Compra c:Session.compras) {
+                                    if(Session.usuario.getEmail().equals(c.getUsuario())){
+                                        estaNocarrinho = true;
+                                        Intent details = new Intent(ctx,DetailsActivity.class);
+                                        extras.putBoolean("nocarrinho", true);
+                                        details.putExtras(extras);
+                                        ctx.startActivity(details);
+                                        break;
+                                    }
+                                }
+                                if(!estaNocarrinho){
+                                    Bundle data = new Bundle();
+                                    data.putSerializable("produto", Session.produto);
+                                    data.putBoolean("nocarrinho", false);
+                                    it = new Intent(ctx,DetailsActivity.class);
+                                    it.putExtras(data);
+                                    activity.startActivity(it);
+                                }
+                            }
+                        }
+                    }*/
+                }
             }
         });
     }
 
     private void clearListView(String message){
         String[] nomes = {},curtas = {},valores = {}, images = {};
-        ProdAdapter adapter = new ProdAdapter(activity,nomes,curtas,valores,images);
-        list = view.findViewById(R.id.lv_prod);
+        ListCell adapter = new ListCell(activity,nomes,curtas,valores,images);
+        list = activity.findViewById(R.id.lv_prod);
 
         dropdown.setVisibility(View.GONE);
         tv_subcateg.setVisibility(View.GONE);
@@ -576,9 +663,9 @@ public class JSONManager {
         Log.d(TAG, "initRecyclerView: init recyclerview");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        android.support.v7.widget.RecyclerView recyclerView = activity.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(ctx, mNames, mImageUrls,mIds,activity,view);
+        RecyclerView adapter = new RecyclerView(ctx, mNames, mImageUrls,mIds,activity);
         recyclerView.setAdapter(adapter);
     }
 

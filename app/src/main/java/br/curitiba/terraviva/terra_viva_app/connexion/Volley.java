@@ -1,5 +1,6 @@
 package br.curitiba.terraviva.terra_viva_app.connexion;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
@@ -19,31 +20,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Volley {
     private String url;
     private Context context;
     private Map params;
     private ProgressDialog pDialog;
+    private Activity activity = null;
 
-    public Volley(Context context, String url){
+    public Volley(Context context, String url, Activity activity){
         this.url = url;
         this.context = context;
         this.params = new HashMap();
+        this.activity = activity;
     }
 
-    public Volley(Context context, String url, Map params){
+    public Volley(Context context, String url, Map params, Activity activity){
         this.url = url;
         this.context = context;
         this.params = params;
+        this.activity = activity;
     }
 
-
     public void getRequest(final String[] target, final VolleyCallback callback){
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Aguarde...");
-        pDialog.setCancelable(false);
-        pDialog.show();
+        if(activity != null){
+            pDialog = new ProgressDialog(activity);
+            pDialog.setMessage("Buscando...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
         StringRequest postRequest = new StringRequest(com.android.volley.Request.Method.GET, url,
                 new Response.Listener<String>()
                 {
@@ -67,7 +71,7 @@ public class Volley {
                                 lista.add(item);
                             }
 
-                            if (pDialog.isShowing())
+                            if (pDialog != null && pDialog.isShowing())
                                 pDialog.dismiss();
                             callback.onSuccess((ArrayList<HashMap<String,String>>) lista);
                         } catch (JSONException e) {
@@ -79,9 +83,10 @@ public class Volley {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (pDialog.isShowing())
+                        if (pDialog != null && pDialog.isShowing())
                             pDialog.dismiss();
-                        Toast.makeText(context, "erro", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Houve um problema de acesso\n " +
+                                "Verifique sua conexão!", Toast.LENGTH_SHORT).show();
                         Log.d("Error response", error.toString());
                     }
                 }
@@ -91,10 +96,12 @@ public class Volley {
     }
 
     public void postRequest(final String[] target, final VolleyCallback callback){
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Aguarde...");
-        pDialog.setCancelable(false);
-        pDialog.show();
+        if(activity != null){
+            pDialog = new ProgressDialog(activity);
+            pDialog.setMessage("Buscando...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
         StringRequest postRequest = new StringRequest(com.android.volley.Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
@@ -117,7 +124,7 @@ public class Volley {
                                 lista.add(item);
                             }
 
-                            if (pDialog.isShowing())
+                            if (pDialog != null && pDialog.isShowing())
                                 pDialog.dismiss();
                             callback.onSuccess((ArrayList<HashMap<String,String>>) lista);
                         } catch (JSONException e) {
@@ -129,8 +136,9 @@ public class Volley {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "erro", Toast.LENGTH_SHORT).show();
-                        if (pDialog.isShowing())
+                        Toast.makeText(context, "Houve um problema de acesso\n " +
+                                "Verifique sua conexão!", Toast.LENGTH_SHORT).show();
+                        if (pDialog != null && pDialog.isShowing())
                             pDialog.dismiss();
                         Log.d("Error response", error.toString());
                     }
