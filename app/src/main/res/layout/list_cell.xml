@@ -5,7 +5,7 @@
     style="bold"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".adapter.ListCell"
+    tools:context=".adapter.ProdListCell"
     tools:layout_editor_absoluteY="81dp">
 
     <ImageView

@@ -12,10 +12,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.connexion.PostManager;
+import br.curitiba.terraviva.terra_viva_app.connexion.LoginManager;
 
 public class LoginActivity extends AppCompatActivity {
-    private PostManager manager;
+    private LoginManager manager;
     private Intent it;
     private TextView tv_erro,tv_home,tv_recuperar;
     private EditText et_email,et_senha;
@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        manager = new PostManager(getApplicationContext(), this);
+        manager = new LoginManager(getApplicationContext(), this);
         tv_erro = findViewById(R.id.tv_erro_login);
         tv_home = findViewById(R.id.tv_voltar_login);
         tv_recuperar = findViewById(R.id.tv_recuperar);

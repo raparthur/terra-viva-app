@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.connexion;
+package br.curitiba.terraviva.terra_viva_app.volley;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

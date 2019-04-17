@@ -1,7 +1,6 @@
 package br.curitiba.terraviva.terra_viva_app.connexion;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,17 +24,17 @@ import java.util.List;
 import java.util.Locale;
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.Session;
-import br.curitiba.terraviva.terra_viva_app.adapter.ListCell;
+import br.curitiba.terraviva.terra_viva_app.adapter.ProdListCell;
 import br.curitiba.terraviva.terra_viva_app.adapter.RecyclerView;
 import br.curitiba.terraviva.terra_viva_app.model.Categoria;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import br.curitiba.terraviva.terra_viva_app.model.Subcateg;
-import br.curitiba.terraviva.terra_viva_app.model.Usuario;
 import br.curitiba.terraviva.terra_viva_app.view.DetailsActivity;
-import br.curitiba.terraviva.terra_viva_app.view.HomeActivity;
+import br.curitiba.terraviva.terra_viva_app.volley.Volley;
+import br.curitiba.terraviva.terra_viva_app.volley.VolleyCallback;
 
-public class JsonHomeManager {
+public class HomeManager {
     private Volley volley;
     private List<Produto> produtos;
     private List<Categoria> categorias;
@@ -54,7 +53,7 @@ public class JsonHomeManager {
     private Categoria selectedCateg;
     private ImageView banner;
 
-    public JsonHomeManager(final Context ctx,Activity activity) {
+    public HomeManager(final Context ctx, Activity activity) {
         this.ctx = ctx;
         this.activity = activity;
         tv_titulo = activity.findViewById(R.id.tv_titulo);
@@ -526,7 +525,7 @@ public class JsonHomeManager {
                 i++;
             }
         }
-        ListCell adapter = new ListCell(activity,nomes,curtas,valores,images);
+        ProdListCell adapter = new ProdListCell(activity,nomes,curtas,valores,images);
         list = activity.findViewById(R.id.lv_prod);
         list.setAdapter(adapter);
 
@@ -563,71 +562,10 @@ public class JsonHomeManager {
         });
     }
 
-    public void atualizaCarrinho(){
-        final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
-        String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
-        volley.getRequest(items, new VolleyCallback() {
-
-            @Override
-            public void onSuccess(ArrayList<HashMap<String, String>> response) {
-                if(response.size() > 0){
-                    List<Compra> compras = new ArrayList<>();
-                    for (HashMap<String,String> hash : response) {
-
-                        Produto p = new Produto();
-                        p.setId(Integer.parseInt(hash.get("produto")));
-                        p.setCateg(Integer.parseInt(hash.get("subcateg")));
-                        p.setNome(hash.get("nome"));
-                        p.setCurta(hash.get("desc_curta"));
-                        p.setLonga(hash.get("desc_longa"));
-                        p.setValor(Float.parseFloat(hash.get("valor")));
-                        p.setEstoque(Integer.parseInt(hash.get("estoque")));
-                        p.setImg(hash.get("img"));
-
-
-                        Compra c = new Compra();
-                        c.setId(Integer.parseInt(hash.get("compra")));
-                        c.setProduto(p);
-                        c.setQtd(Integer.parseInt(hash.get("qtd")));
-                        c.setUsuario(Session.usuario.getEmail());
-                        compras.add(c);
-                    }
-                    Session.compras = compras;
-                    /*if(produtoPreviamentestado){
-                        Intent it = activity.getIntent();
-                        if(it != null){
-                            Bundle extras = it.getExtras();
-                            if(extras != null){
-                                boolean estaNocarrinho = false;
-                                for (Compra c:Session.compras) {
-                                    if(Session.usuario.getEmail().equals(c.getUsuario())){
-                                        estaNocarrinho = true;
-                                        Intent details = new Intent(ctx,DetailsActivity.class);
-                                        extras.putBoolean("nocarrinho", true);
-                                        details.putExtras(extras);
-                                        ctx.startActivity(details);
-                                        break;
-                                    }
-                                }
-                                if(!estaNocarrinho){
-                                    Bundle data = new Bundle();
-                                    data.putSerializable("produto", Session.produto);
-                                    data.putBoolean("nocarrinho", false);
-                                    it = new Intent(ctx,DetailsActivity.class);
-                                    it.putExtras(data);
-                                    activity.startActivity(it);
-                                }
-                            }
-                        }
-                    }*/
-                }
-            }
-        });
-    }
 
     private void clearListView(String message){
         String[] nomes = {},curtas = {},valores = {}, images = {};
-        ListCell adapter = new ListCell(activity,nomes,curtas,valores,images);
+        ProdListCell adapter = new ProdListCell(activity,nomes,curtas,valores,images);
         list = activity.findViewById(R.id.lv_prod);
 
         dropdown.setVisibility(View.GONE);

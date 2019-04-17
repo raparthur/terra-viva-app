@@ -13,12 +13,12 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.connexion.JsonHomeManager;
+import br.curitiba.terraviva.terra_viva_app.connexion.HomeManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecyclerView extends android.support.v7.widget.RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private JsonHomeManager manager;
+    private HomeManager manager;
     private TextView tv_titulo;
 
     private static final String TAG = "RecyclerView";
@@ -36,7 +36,7 @@ public class RecyclerView extends android.support.v7.widget.RecyclerView.Adapter
         mContext = context;
         this.activity = activity;
         mIds = ids;
-        manager = new JsonHomeManager(context,activity);
+        manager = new HomeManager(context,activity);
     }
 
     @Override

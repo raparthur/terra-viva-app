@@ -20,19 +20,21 @@ import java.util.Locale;
 
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.Session;
-import br.curitiba.terraviva.terra_viva_app.adapter.ListCell;
+import br.curitiba.terraviva.terra_viva_app.adapter.ProdListCell;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import br.curitiba.terraviva.terra_viva_app.view.DetailsFragment;
+import br.curitiba.terraviva.terra_viva_app.volley.Volley;
+import br.curitiba.terraviva.terra_viva_app.volley.VolleyCallback;
 
-public class JsonDetailsManager {
+public class DetailsManager {
     private Context ctx;
     private Activity activity;
     private ListView lv_relacionados;
     private List<Produto> produtos;
     private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 
-    public JsonDetailsManager(final Context ctx, Activity activity, View view) {
+    public DetailsManager(final Context ctx, Activity activity, View view) {
         this.ctx = ctx;
         this.activity = activity;
         lv_relacionados = view.findViewById(R.id.lv_relacionados);
@@ -88,7 +90,7 @@ public class JsonDetailsManager {
                         i++;
                     }
                 }
-                ListCell adapter = new ListCell(activity,nomes,curtas,valores,images);
+                ProdListCell adapter = new ProdListCell(activity,nomes,curtas,valores,images);
                 lv_relacionados.setAdapter(adapter);
 
                 //definir tamanho listview

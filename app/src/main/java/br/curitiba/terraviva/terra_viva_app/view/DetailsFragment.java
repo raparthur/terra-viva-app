@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,13 +25,12 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.connexion.JsonDetailsManager;
-import br.curitiba.terraviva.terra_viva_app.connexion.PostManager;
+import br.curitiba.terraviva.terra_viva_app.connexion.DetailsManager;
+import br.curitiba.terraviva.terra_viva_app.connexion.EstoqueController;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
-import br.curitiba.terraviva.terra_viva_app.model.Usuario;
+
 
 import static br.curitiba.terraviva.terra_viva_app.Session.compras;
 import static br.curitiba.terraviva.terra_viva_app.Session.produto;
@@ -53,8 +50,8 @@ public class DetailsFragment extends Fragment {
     ImageView img_prod;
     ListView lv_relacionados;
     ProgressBar progressBar;
-    JsonDetailsManager manager;
-    PostManager postManager;
+    DetailsManager manager;
+    EstoqueController controller;
     int qtd = 1;
     float total;
     boolean comprado = false;
@@ -75,9 +72,9 @@ public class DetailsFragment extends Fragment {
 
 
 
-        manager = new JsonDetailsManager(getContext(), getActivity(), view);
+        manager = new DetailsManager(getContext(), getActivity(), view);
         manager.getRecomendados(produto);
-        postManager = new PostManager(getContext(), getActivity());
+        controller = new EstoqueController(getContext(), getActivity());
 
         // }
 
@@ -142,7 +139,7 @@ public class DetailsFragment extends Fragment {
                     public void onClick(View view) {
 
                         if (!comprado) {
-                            postManager.comprar(produto, qtd, btn_cart);
+                            controller.comprar(produto, qtd, btn_cart);
                             //apenas para garantir que o estoque nunca seja negativo
                             if (produto.getEstoque() < qtd)
                                 produto.setEstoque(0);
@@ -152,7 +149,7 @@ public class DetailsFragment extends Fragment {
                             int i = 0;
                             for (Compra c : compras) {
                                 if (c.getProduto().getId() == produto.getId()) {
-                                    postManager.desfazCompra(c, btn_cart, tv_qtd);
+                                    controller.desfazCompra(c, btn_cart, tv_qtd);
                                     qtd = 1;
                                     compras.remove(i);
                                     comprado = false;

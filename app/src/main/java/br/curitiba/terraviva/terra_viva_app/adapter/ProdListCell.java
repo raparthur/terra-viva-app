@@ -20,7 +20,7 @@ import java.net.URL;
 
 import br.curitiba.terraviva.terra_viva_app.R;
 
-public class ListCell extends ArrayAdapter<String> {
+public class ProdListCell extends ArrayAdapter<String> {
     private Handler handler = new Handler();
     private final Activity context;
     private final String[] nomeProd;
@@ -28,7 +28,7 @@ public class ListCell extends ArrayAdapter<String> {
     private final String[] valorProd;
     private final String[] imgProd;
 
-    public ListCell(Activity context, String[] nomeProd, String[] curtaProd, String[] valorProd, String[] imgProd){
+    public ProdListCell(Activity context, String[] nomeProd, String[] curtaProd, String[] valorProd, String[] imgProd){
         super(context,R.layout.list_cell,nomeProd);
         this.context = context;
         this.nomeProd = nomeProd;

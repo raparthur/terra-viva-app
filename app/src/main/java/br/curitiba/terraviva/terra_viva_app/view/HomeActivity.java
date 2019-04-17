@@ -24,8 +24,8 @@ import android.widget.Toast;
 import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.Session;
-import br.curitiba.terraviva.terra_viva_app.connexion.JsonHomeManager;
-import br.curitiba.terraviva.terra_viva_app.connexion.PostManager;
+import br.curitiba.terraviva.terra_viva_app.connexion.EstoqueController;
+import br.curitiba.terraviva.terra_viva_app.connexion.HomeManager;
 import br.curitiba.terraviva.terra_viva_app.model.Usuario;
 
 
@@ -40,7 +40,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
-        JsonHomeManager manager = new JsonHomeManager(getApplicationContext(),HomeActivity.this);
+        HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
+        EstoqueController controller = new EstoqueController(getApplicationContext(),HomeActivity.this);
 
         Spinner subcategs = findViewById(R.id.dropdown);
         Spinner ordenar = findViewById(R.id.ordenar);
@@ -60,7 +61,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         manager.getCategorias();
 
         if(Session.usuario != null) {
-            manager.atualizaCarrinho();
+            controller.atualizaListaCompra();
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -166,7 +167,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                     TextView tv_titulo =  findViewById(R.id.tv_titulo);
                     tv_titulo.setText("Destaques");
-                    JsonHomeManager manager = new JsonHomeManager(getApplicationContext(),HomeActivity.this);
+                    HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
                     manager.getDestaques();
 
                 return false;
@@ -180,7 +181,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                     TextView tv_titulo = findViewById(R.id.tv_titulo);
                     tv_titulo.setText("Pesquisa para \"" + query + "\":");
-                    JsonHomeManager manager = new JsonHomeManager(getApplicationContext(),HomeActivity.this);
+                    HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
                     searchView.clearFocus();
                     manager.getProdutosPesquisa(query);
 
