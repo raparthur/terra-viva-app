@@ -17,42 +17,57 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import br.curitiba.terraviva.terra_viva_app.R;
 
-public class ProdListCell extends ArrayAdapter<String> {
+public class CarrinhoListCell extends ArrayAdapter<String> {
     private Handler handler = new Handler();
     private final Activity context;
     private final String[] nomeProd;
-    private final String[] curtaProd;
-    private final String[] valorProd;
+    private final String[] qtdProd;
     private final String[] imgProd;
+    private final float[] valor;
 
-    public ProdListCell(Activity context, String[] nomeProd, String[] curtaProd, String[] valorProd, String[] imgProd){
+    public CarrinhoListCell(Activity context, String[] nomeProd, float[] valorProd, String[] qtdProd, String[] imgProd){
         super(context,R.layout.list_cell_prod,nomeProd);
         this.context = context;
         this.nomeProd = nomeProd;
-        this.curtaProd = curtaProd;
-        this.valorProd = valorProd;
+        this.qtdProd = qtdProd;
         this.imgProd = imgProd;
+        this.valor = valorProd;
     }
 
     @NonNull
     @Override
     public View getView(final int position, View view, ViewGroup parent){
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.list_cell_prod,null,true);
-        TextView tv_nome = rowView.findViewById(R.id.tv_nome_prod);
+        View rowView = inflater.inflate(R.layout.list_cell_carrinho,null,true);
 
-        final ProgressBar progressBar = rowView.findViewById(R.id.progressBar);
-        final ImageView imageView = rowView.findViewById(R.id.img_prod);
+        TextView tv_nome = rowView.findViewById(R.id.tv_adapter_nome);
+        TextView tv_total = rowView.findViewById(R.id.tv_adapter_total);
+
+        final ProgressBar progressBar = rowView.findViewById(R.id.adapter_progressBar);
+        final ImageView imageView = rowView.findViewById(R.id.adapter_img);
         imageView.setVisibility(View.INVISIBLE);
 
-        TextView tv_curta = rowView.findViewById(R.id.tv_curta_prod);
-        TextView tv_valor = rowView.findViewById(R.id.tv_valor_prod);
+        TextView tv_qtd = rowView.findViewById(R.id.tv_adapter_qtd);
+        TextView tv_valor = rowView.findViewById(R.id.tv_adapter_valor);
         tv_nome.setText(nomeProd[position]);
-        tv_curta.setText(curtaProd[position]);
-        tv_valor.setText(valorProd[position]);
+        tv_qtd.setText(qtdProd[position]);
+        Locale ptBr = new Locale("pt", "BR");
+        NumberFormat formato = NumberFormat.getCurrencyInstance(ptBr);
+        String valor = formato.format(this.valor[position]);
+        tv_valor.setText(valor);
+
+        String qtd = tv_qtd.getText().toString();
+
+        qtd = qtd.replace(",",".");
+
+        float total = (float)Integer.parseInt(qtd)*this.valor[position];
+        valor = formato.format(total);
+        tv_total.setText(valor);
 
         new Thread(){
             public void run(){

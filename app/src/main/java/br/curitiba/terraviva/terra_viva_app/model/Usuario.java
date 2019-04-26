@@ -10,6 +10,8 @@ public class Usuario implements Serializable {
     private String email;
     private String nome;
     private Date nasc;
+    private String ddd;
+    private String tel;
     private String cpf;
     private String senha;
     private String rua;
@@ -18,7 +20,30 @@ public class Usuario implements Serializable {
     private String bairro;
     private String cidade;
     private String uf;
+    private String cep;
 
+    public String getDdd() {
+        return ddd;
+    }
+
+    public void setDdd(String ddd) {
+        this.ddd = ddd;
+    }
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
 
     public String getEmail() {
         return email;

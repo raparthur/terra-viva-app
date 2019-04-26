@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.view;
+package br.curitiba.terraviva.terra_viva_app.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,7 +12,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.connexion.LoginManager;
+import br.curitiba.terraviva.terra_viva_app.activities.HomeActivity;
+import br.curitiba.terraviva.terra_viva_app.api.LoginManager;
 
 public class LoginActivity extends AppCompatActivity {
     private LoginManager manager;

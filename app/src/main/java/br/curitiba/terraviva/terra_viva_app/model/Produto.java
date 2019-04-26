@@ -14,20 +14,44 @@ public class Produto implements Comparable,Serializable {
     private String img;
     private boolean destaque;
     private int estoque;
+    private float peso;
+    private int altura;
+    private int largura;
+    private int comprimento;
 
-    public Produto() {
+    public float getPeso() {
+        return peso;
     }
 
-    public Produto(int id, String nome, String curta, String longa, int categ, float valor, String img, boolean destaque, int estoque) {
-        this.id = id;
-        this.nome = nome;
-        this.curta = curta;
-        this.longa = longa;
-        this.categ = categ;
-        this.valor = valor;
-        this.img = img;
-        this.destaque = destaque;
-        this.estoque = estoque;
+    public void setPeso(float peso) {
+        this.peso = peso;
+    }
+
+    public int getAltura() {
+        return altura;
+    }
+
+    public void setAltura(int altura) {
+        this.altura = altura;
+    }
+
+    public int getLargura() {
+        return largura;
+    }
+
+    public void setLargura(int largura) {
+        this.largura = largura;
+    }
+
+    public int getComprimento() {
+        return comprimento;
+    }
+
+    public void setComprimento(int comprimento) {
+        this.comprimento = comprimento;
+    }
+
+    public Produto() {
     }
 
     public int getId() {

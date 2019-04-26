@@ -44,7 +44,7 @@ public class Volley {
     public void getRequest(final String[] target, final VolleyCallback callback){
         if(activity != null){
             pDialog = new ProgressDialog(activity);
-            pDialog.setMessage("Buscando...");
+            pDialog.setMessage("Aguarde...");
             pDialog.setCancelable(false);
             pDialog.show();
         }
@@ -85,8 +85,8 @@ public class Volley {
                     public void onErrorResponse(VolleyError error) {
                         if (pDialog != null && pDialog.isShowing())
                             pDialog.dismiss();
-                        Toast.makeText(context, "Houve um problema de acesso\n " +
-                                "Verifique sua conexão!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Falha de conexão\n " +
+                                "Por favor, tente novamente", Toast.LENGTH_SHORT).show();
                         Log.d("Error response", error.toString());
                     }
                 }
@@ -98,7 +98,7 @@ public class Volley {
     public void postRequest(final String[] target, final VolleyCallback callback){
         if(activity != null){
             pDialog = new ProgressDialog(activity);
-            pDialog.setMessage("Buscando...");
+            pDialog.setMessage("Aguarde...");
             pDialog.setCancelable(false);
             pDialog.show();
         }
@@ -136,8 +136,8 @@ public class Volley {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Houve um problema de acesso\n " +
-                                "Verifique sua conexão!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Falha de conexão\n " +
+                                "Por favor, tente novamente", Toast.LENGTH_SHORT).show();
                         if (pDialog != null && pDialog.isShowing())
                             pDialog.dismiss();
                         Log.d("Error response", error.toString());

@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.connexion;
+package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,23 +23,26 @@ import br.curitiba.terraviva.terra_viva_app.Session;
 import br.curitiba.terraviva.terra_viva_app.adapter.ProdListCell;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
-import br.curitiba.terraviva.terra_viva_app.view.DetailsFragment;
+import br.curitiba.terraviva.terra_viva_app.activities.DetalhesFragment;
 import br.curitiba.terraviva.terra_viva_app.volley.Volley;
 import br.curitiba.terraviva.terra_viva_app.volley.VolleyCallback;
 
-public class DetailsManager {
+import static br.curitiba.terraviva.terra_viva_app.Util.formatCurrency;
+
+public class DetalhesManager {
     private Context ctx;
     private Activity activity;
     private ListView lv_relacionados;
     private List<Produto> produtos;
     private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 
-    public DetailsManager(final Context ctx, Activity activity, View view) {
+    public DetalhesManager(final Context ctx, Activity activity, View view) {
         this.ctx = ctx;
         this.activity = activity;
         lv_relacionados = view.findViewById(R.id.lv_relacionados);
     }
 
+    //apresenta a lista de produto recomendados (nesse caso, simplesmente aqueles que estão na mesma subcategoria)
     public void getRecomendados(final Produto produto){
         final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/prod_por_subcat/" + produto.getCateg(),activity);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
@@ -80,9 +83,7 @@ public class DetailsManager {
                         images[i] = produto.getImg();
 
                         if(produto.getEstoque() > 0){
-                            Locale ptBr = new Locale("pt", "BR");
-                            NumberFormat formato = NumberFormat.getCurrencyInstance(ptBr);
-                            valores[i] = formato.format(produto.getValor());
+                            valores[i] = formatCurrency(produto.getValor());
                         }else
                             valores[i] = "esgotado";
 
@@ -106,7 +107,8 @@ public class DetailsManager {
                         AppCompatActivity activity = (AppCompatActivity) ctx;
                         final FragmentManager fragmentManager = activity.getSupportFragmentManager();
 
-                        final Fragment argumentFragment = new DetailsFragment();//Get Fragment Instance
+                        //quando novo produto é clicado nos recomendados, pega o produto clicado, seta na sessao, atualiza o estoque e chama novo fragmento
+                        final Fragment argumentFragment = new DetalhesFragment();//Get Fragment Instance
                         Bundle data = new Bundle();//Use bundle to pass data
                         data.putSerializable("produto", produtos.get(position));
                         getEstoque(produto);
@@ -118,6 +120,7 @@ public class DetailsManager {
         });
     }
 
+    //atualiza o carrino no servidor
     public void setCompras(){
         final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
         String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
@@ -150,7 +153,7 @@ public class DetailsManager {
             }
         });
     }
-
+    //busca o estoque atualizado do produto no servidor a fim de manter o sistema atualizado se ainda é possivel comprar o produto
     public void getEstoque(final Produto produto){
         Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId(),activity);
         String[] items = {"estoque"};

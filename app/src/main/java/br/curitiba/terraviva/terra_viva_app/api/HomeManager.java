@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.connexion;
+package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,16 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.Session;
 import br.curitiba.terraviva.terra_viva_app.adapter.ProdListCell;
 import br.curitiba.terraviva.terra_viva_app.adapter.RecyclerView;
 import br.curitiba.terraviva.terra_viva_app.model.Categoria;
-import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import br.curitiba.terraviva.terra_viva_app.model.Subcateg;
-import br.curitiba.terraviva.terra_viva_app.view.DetailsActivity;
+import br.curitiba.terraviva.terra_viva_app.activities.DetalhesActivity;
+
 import br.curitiba.terraviva.terra_viva_app.volley.Volley;
 import br.curitiba.terraviva.terra_viva_app.volley.VolleyCallback;
+
+import static br.curitiba.terraviva.terra_viva_app.Util.formatCurrency;
 
 public class HomeManager {
     private Volley volley;
@@ -157,7 +158,7 @@ public class HomeManager {
 
     public void getDestaques(){
         volley = new Volley(ctx,"https://terraviva.curitiba.br/api/destaques",activity);
-        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
+        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
@@ -176,6 +177,10 @@ public class HomeManager {
                             p.setValor(Float.parseFloat(hash.get("valor")));
                             p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
+                            p.setPeso(Float.parseFloat(hash.get("peso")));
+                            p.setAltura(Integer.parseInt(hash.get("altura")));
+                            p.setLargura(Integer.parseInt(hash.get("largura")));
+                            p.setComprimento(Integer.parseInt(hash.get("comprimento")));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
                             produtos.add(p);
@@ -242,7 +247,7 @@ public class HomeManager {
     public void getProdutosCateg(final int id_categoria){
 
         volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_categ/"+id_categoria,activity);
-        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
+        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
@@ -260,6 +265,10 @@ public class HomeManager {
                             p.setValor(Float.parseFloat(hash.get("valor")));
                             p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
+                            p.setPeso(Float.parseFloat(hash.get("peso")));
+                            p.setAltura(Integer.parseInt(hash.get("altura")));
+                            p.setLargura(Integer.parseInt(hash.get("largura")));
+                            p.setComprimento(Integer.parseInt(hash.get("comprimento")));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
                             produtos.add(p);
@@ -333,7 +342,7 @@ public class HomeManager {
     private void getProdutosSubcat(final Subcateg subcateg){
         tv_titulo.setText(selectedCateg.getNome());
         volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_subcat/"+subcateg.getId(),activity);
-        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
+        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
@@ -350,6 +359,10 @@ public class HomeManager {
                             p.setValor(Float.parseFloat(hash.get("valor")));
                             p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
+                            p.setPeso(Float.parseFloat(hash.get("peso")));
+                            p.setAltura(Integer.parseInt(hash.get("altura")));
+                            p.setLargura(Integer.parseInt(hash.get("largura")));
+                            p.setComprimento(Integer.parseInt(hash.get("comprimento")));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
                             produtos.add(p);
@@ -417,7 +430,7 @@ public class HomeManager {
 
     public void getProdutosPesquisa(final String termo){
         volley = new Volley(ctx,"https://terraviva.curitiba.br/api/pesquisa/"+termo,activity);
-        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
+        String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
@@ -435,6 +448,10 @@ public class HomeManager {
                             p.setValor(Float.parseFloat(hash.get("valor")));
                             p.setCateg(Integer.parseInt(hash.get("subcateg")));
                             p.setImg(hash.get("img"));
+                            p.setPeso(Float.parseFloat(hash.get("peso")));
+                            p.setAltura(Integer.parseInt(hash.get("altura")));
+                            p.setLargura(Integer.parseInt(hash.get("largura")));
+                            p.setComprimento(Integer.parseInt(hash.get("comprimento")));
                             p.setEstoque(Integer.parseInt(hash.get("estoque")));
 
                             produtos.add(p);
@@ -518,9 +535,7 @@ public class HomeManager {
                 if(produto.getEstoque() == 0)
                     valores[i] = "esgotado";
                 else{
-                    Locale ptBr = new Locale("pt", "BR");
-                    NumberFormat formato = NumberFormat.getCurrencyInstance(ptBr);
-                    valores[i] = formato.format(produto.getValor());
+                    valores[i] = formatCurrency(produto.getValor());
                 }
                 i++;
             }
@@ -541,7 +556,7 @@ public class HomeManager {
 
                 Bundle data = new Bundle();//Use bundle to pass data
                 data.putSerializable("produto", produtos.get(position));
-                Intent it = new Intent(ctx,DetailsActivity.class);
+                Intent it = new Intent(ctx,DetalhesActivity.class);
                 it.putExtras(data);
                 activity.startActivity(it);
 
@@ -549,6 +564,9 @@ public class HomeManager {
         });
     }
 
+    //busca o estoque do produto naquele momento (é uma forma de manter mais ou menos o estoque atualizado,
+    // informa o sistema caso algum usuário tenha eventualmente comprado este produto e o estoque tenha se esgotado -
+    // o sistema tem verificação antes de cada compra pra mostrar "indisponivel" se o estoque zerou)
     public void getEstoque(final Produto produto){
         Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId(),activity);
         String[] items = {"estoque"};
@@ -576,7 +594,7 @@ public class HomeManager {
     }
 
 
-    // To calculate the total height of all items in ListView call with items = adapter.getCount()
+    // calcular o tamanho que vai ter a listview que ira ocupar a tela com base na qtd de itens
     private static int getItemHeightofListView(ListView listView, int items) {
         ListAdapter adapter = listView.getAdapter();
 

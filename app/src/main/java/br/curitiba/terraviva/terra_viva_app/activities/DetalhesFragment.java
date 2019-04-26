@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.view;
+package br.curitiba.terraviva.terra_viva_app.activities;
 
 
 import android.content.Intent;
@@ -25,9 +25,11 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.connexion.DetailsManager;
-import br.curitiba.terraviva.terra_viva_app.connexion.EstoqueController;
+
+import br.curitiba.terraviva.terra_viva_app.api.DetalhesManager;
+import br.curitiba.terraviva.terra_viva_app.api.EstoqueController;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import br.curitiba.terraviva.terra_viva_app.model.Produto;
 
@@ -35,14 +37,14 @@ import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import static br.curitiba.terraviva.terra_viva_app.Session.compras;
 import static br.curitiba.terraviva.terra_viva_app.Session.produto;
 import static br.curitiba.terraviva.terra_viva_app.Session.usuario;
+import static br.curitiba.terraviva.terra_viva_app.Util.formatCurrency;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailsFragment extends Fragment {
+public class DetalhesFragment extends Fragment {
 
     private Handler handler = new Handler();
-    NumberFormat formato;
     View view;
     TextView tv_nome, tv_curta, tv_longa, tv_valor, tv_qtd, tv_total;
     Button btn_cart, btn_vermais, btn_finalizar;
@@ -50,15 +52,15 @@ public class DetailsFragment extends Fragment {
     ImageView img_prod;
     ListView lv_relacionados;
     ProgressBar progressBar;
-    DetailsManager manager;
+    DetalhesManager manager;
     EstoqueController controller;
+    MenuActions action;
     int qtd = 1;
     float total;
     boolean comprado = false;
     boolean estaNoCarrinho = false;
 
-
-    public DetailsFragment() {
+    public DetalhesFragment() {
         // Required empty public constructor
     }
 
@@ -70,13 +72,10 @@ public class DetailsFragment extends Fragment {
             produto = (Produto) getArguments().getSerializable("produto");
         }
 
-
-
-        manager = new DetailsManager(getContext(), getActivity(), view);
+        action = new MenuActions(getContext(),getActivity());
+        manager = new DetalhesManager(getContext(), getActivity(), view);
         manager.getRecomendados(produto);
         controller = new EstoqueController(getContext(), getActivity());
-
-        // }
 
         progressBar = view.findViewById(R.id.progressBarDetails);
         tv_nome = view.findViewById(R.id.tv_nome_details);
@@ -93,11 +92,13 @@ public class DetailsFragment extends Fragment {
         img_prod = view.findViewById(R.id.img_prod_details);
         lv_relacionados = view.findViewById(R.id.lv_relacionados);
 
+        //inicialmente a descrição curta é invisivel
         tv_longa.setVisibility(View.GONE);
+        //inicialmente o produto é invisivel, somente o progressDialog (imagem de "carregando") é visivel
         img_prod.setVisibility(View.INVISIBLE);
 
+        //se não logado vai para a tela de login
         if (usuario == null) {
-
             btn_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -110,6 +111,7 @@ public class DetailsFragment extends Fragment {
             });
 
         } else {
+            //percorre a lista de compras salva na sessao e informa o sistema e verifica produto já está no carrinho
             if (compras != null && compras.size() > 0) {
                 for (Compra c : compras) {
                     if (c.getUsuario().equals(usuario.getEmail())) {
@@ -119,6 +121,7 @@ public class DetailsFragment extends Fragment {
                 }
                 if (estaNoCarrinho) {
                     for (Compra c : compras)
+                        //substitui a escrita no botão "comprar", caso positivo
                         if (c.getProduto().getId() == produto.getId()) {
                             btn_cart.setText("Remover do\ncarrinho");
                             btn_cart.setBackgroundColor(0xffcc0000);
@@ -133,6 +136,7 @@ public class DetailsFragment extends Fragment {
                 btn_cart.setBackgroundColor(0xff8b4513);
             }
 
+            //verifica se há estoque disponivel pra ser possivel comprar (acrescentar no carrinho)
             if (produto.getEstoque() > 0 || estaNoCarrinho) {
                 btn_cart.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -172,10 +176,8 @@ public class DetailsFragment extends Fragment {
         tv_longa.setText(produto.getLonga());
         tv_qtd.setText("x " + qtd);
 
-        Locale ptBr = new Locale("pt", "BR");
-        formato = NumberFormat.getCurrencyInstance(ptBr);
-        String valorFormatado = formato.format(produto.getValor());
-        String totalFormatado = formato.format(qtd * produto.getValor());
+        String valorFormatado = formatCurrency(produto.getValor());
+        String totalFormatado = formatCurrency(qtd * produto.getValor());
 
         tv_valor.setText(valorFormatado);
         tv_total.setText(totalFormatado);
@@ -189,7 +191,7 @@ public class DetailsFragment extends Fragment {
                         if (produto.getEstoque() > qtd) {
                             tv_qtd.setText("x " + (++qtd));
                             total = produto.getValor() * qtd;
-                            tv_total.setText(formato.format(total));
+                            tv_total.setText(formatCurrency(total));
                         } else
                             Toast.makeText(getContext(), "Desculpe, dispomos apenas de " + produto.getEstoque() +
                                     " unidades em estoque no momento", Toast.LENGTH_LONG).show();
@@ -206,7 +208,7 @@ public class DetailsFragment extends Fragment {
                     if (qtd > 1) {
                         tv_qtd.setText("x " + (--qtd));
                         total = produto.getValor() * qtd;
-                        tv_total.setText(formato.format(total));
+                        tv_total.setText(formatCurrency(total));
                     }
                 }
             }
@@ -221,6 +223,14 @@ public class DetailsFragment extends Fragment {
             }
         });
 
+        btn_finalizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                action.goCarrinho();
+            }
+        });
+
+        //baixa a imagem do endereço retornado de produto.getImg(), ecsconde o progressDialog e a apresenta no ImageView
         new Thread() {
             public void run() {
                 Bitmap img = null;

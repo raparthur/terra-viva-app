@@ -10,4 +10,6 @@ public final class Session {
     public static Usuario usuario;
     public static List<Compra> compras;
     public static Produto produto;
+    public static String prazo;
+    public static float frete;
 }

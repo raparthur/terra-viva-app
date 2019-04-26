@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.view;
+package br.curitiba.terraviva.terra_viva_app.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,8 +24,7 @@ import android.widget.Toast;
 import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.Session;
-import br.curitiba.terraviva.terra_viva_app.connexion.EstoqueController;
-import br.curitiba.terraviva.terra_viva_app.connexion.HomeManager;
+import br.curitiba.terraviva.terra_viva_app.api.HomeManager;
 import br.curitiba.terraviva.terra_viva_app.model.Usuario;
 
 
@@ -39,10 +38,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
-        EstoqueController controller = new EstoqueController(getApplicationContext(),HomeActivity.this);
 
+        //instancia e alimenta dropboxes
         Spinner subcategs = findViewById(R.id.dropdown);
         Spinner ordenar = findViewById(R.id.ordenar);
 
@@ -50,24 +48,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_checked, orders);
         ordenar.setAdapter(adapter);
 
+        //onde irá aparecer o nome da subcategoria selecionada
         TextView tv_subcateg = findViewById(R.id.tv_subcateg);
 
+        //a principio, esconde-as, pois só aparecerão quando clicado em uma categoria
         subcategs.setVisibility(View.GONE);
         tv_subcateg.setVisibility(View.GONE);
 
         /**
-         * inicio de tudo
+         * ponto de partida
          */
         manager.getCategorias();
-
-        if(Session.usuario != null) {
-            controller.atualizaListaCompra();
-        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+        //menu deslizante
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -80,6 +77,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         nav_Menu = navigationView.getMenu();
         headerView = navigationView.getHeaderView(0);
 
+        //"decide" quais opções aparecerão no menu conforme o usuario esteja logado (usuario != null) ou não (usuario == null)
         menuFilter(Session.usuario);
     }
 
@@ -90,13 +88,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         MenuActions menuAction = new MenuActions(getApplicationContext(),HomeActivity.this);
         int id = item.getItemId();
 
+        //opções do menu
         if (id == R.id.nav_in) {
 
             Intent it = new Intent(this,LoginActivity.class);
             startActivity(it);
         }
         else if (id == R.id.nav_out) {
-            Toast.makeText(this, "saindo!", Toast.LENGTH_SHORT).show();
+            menuAction.logout();
         }
         else if (id == R.id.nav_home) {
             menuAction.goHome();
@@ -107,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         }
         else if (id == R.id.nav_cart) {
-            Toast.makeText(this, "var carrinho!", Toast.LENGTH_SHORT).show();
+            menuAction.goCarrinho();
         }
         else if (id == R.id.nav_profile) {
             Toast.makeText(this, "ver meu perfil!", Toast.LENGTH_SHORT).show();
@@ -118,6 +117,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    //ao apertar voltar do telefone
     @Override
     public void onBackPressed() {
 
@@ -125,7 +125,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            // super.onBackPressed();
+            // mostra a caixa de dialogo "sair ou não"
             new AlertDialog.Builder(this)
                     .setTitle("Sair do aplicativo?")
                     //.setMessage("Sair do aplicativo?")
@@ -150,16 +150,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    //insere itens no toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
 
+        //barra pesquisa do toolbar
         final SearchView searchView = (SearchView) menu.findItem(R.id.menuSearch).getActionView();
 
         searchView.setQueryHint("pesquisar produto...");
 
+        //ao clicar no "x" de cancelar da barra de busca, vai chamar os destaques (como no inicio)
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -176,6 +179,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+            //ao clicar na "lupa" da barra de pesquisa, chama a perquisa por termo
             @Override
             public boolean onQueryTextSubmit(String query) {
 

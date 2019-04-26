@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.view;
+package br.curitiba.terraviva.terra_viva_app.activities;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -17,11 +17,10 @@ import br.curitiba.terraviva.terra_viva_app.model.Produto;
 import br.curitiba.terraviva.terra_viva_app.model.Usuario;
 
 import static br.curitiba.terraviva.terra_viva_app.Session.compras;
+import static br.curitiba.terraviva.terra_viva_app.Session.produto;
 import static br.curitiba.terraviva.terra_viva_app.Session.usuario;
 
-public class DetailsActivity extends AppCompatActivity {
-
-    //Produto produto;
+public class DetalhesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +30,13 @@ public class DetailsActivity extends AppCompatActivity {
         Intent it = getIntent();
         Bundle bundle = it.getExtras();
         if(bundle != null){
+            //seta o produto a ser discrimonado na sessao
             Session.produto = (Produto) bundle.getSerializable("produto");
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
-            Fragment argumentFragment = new DetailsFragment();
-            //caso queira passar dados especificos para o fragmento
-            //Bundle data = new Bundle();//Use bundle to pass data
-            //data.putSerializable("produto", produto);
-            //argumentFragment.setArguments(data);//Finally set argument bundle to fragment
-
+            //chama o fragmento
+            Fragment argumentFragment = new DetalhesFragment();
             fragmentManager.beginTransaction().replace(R.id.frame_container, argumentFragment).commit();//now replace the argument fragment
 
         }
@@ -50,6 +46,8 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
+
+        //conforme logado ou não, apenas alguns ícones dotoolbar irão aparecer (irá "inflar" arquivos de menu diferentes)
         if(usuario == null)
             inflater.inflate(R.menu.menu_logout_icons, menu);
         else
@@ -58,6 +56,7 @@ public class DetailsActivity extends AppCompatActivity {
         return true;
     }
 
+    //icones da toolbar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         MenuActions action = new MenuActions(getApplicationContext(),this);
@@ -73,13 +72,13 @@ public class DetailsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"chamar cadastro",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_out:
-                Toast.makeText(getApplicationContext(),"fazer logout",Toast.LENGTH_SHORT).show();
+                action.logout();
                 break;
             case R.id.nav_profile:
                 Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_cart:
-                Toast.makeText(getApplicationContext(),"chamar carrinho",Toast.LENGTH_SHORT).show();
+                action.goCarrinho();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

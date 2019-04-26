@@ -1,4 +1,4 @@
-package br.curitiba.terraviva.terra_viva_app.connexion;
+package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
 import android.content.Context;
@@ -98,6 +98,7 @@ public class EstoqueController {
         });
     }
 
+    //salva o status atual do carrinho de compras no servidor
     public void atualizaListaCompra(){
         final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
         String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
