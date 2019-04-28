@@ -140,7 +140,7 @@ public class Volley {
                                 "Por favor, tente novamente", Toast.LENGTH_SHORT).show();
                         if (pDialog != null && pDialog.isShowing())
                             pDialog.dismiss();
-                        Log.d("Error response", error.toString());
+                        callback.onError(error.toString());
                     }
                 }
         ) {

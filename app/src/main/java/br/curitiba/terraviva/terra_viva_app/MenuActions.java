@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import br.curitiba.terraviva.terra_viva_app.activities.CarrinhoActivity;
 import br.curitiba.terraviva.terra_viva_app.activities.HomeActivity;
+import br.curitiba.terraviva.terra_viva_app.activities.PessoaisActivity;
 
 public class MenuActions {
     private Context context;
@@ -28,9 +30,13 @@ public class MenuActions {
         if(Session.compras != null && Session.compras.size() > 0) {
             Intent it = new Intent(context, CarrinhoActivity.class);
             context.startActivity(it);
-            activity.finish();
         }else
             Toast.makeText(context,"Seu carrinho está vazio!",Toast.LENGTH_LONG).show();
+    }
+
+    public void partiuCadastro(){
+        Intent it = new Intent(context,PessoaisActivity.class);
+        activity.startActivity(it);
     }
 
     public void logout(){

@@ -20,6 +20,7 @@ import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.api.CarrinhoManager;
 import br.curitiba.terraviva.terra_viva_app.api.Correios;
+import br.curitiba.terraviva.terra_viva_app.api.Viacep;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
 import static br.curitiba.terraviva.terra_viva_app.Session.compras;
 import static br.curitiba.terraviva.terra_viva_app.Session.usuario;
@@ -31,17 +32,17 @@ public class CarrinhoActivity extends AppCompatActivity {
     EditText et_cep;
     ListView lv_carrinho;
     Button btn_calcular,btn_avancar;
-    CarrinhoManager manager;
     float carrinho=0;
     Correios correios;
     RadioButton rbPac,rbSedex;
+    Viacep viacep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carrinho);
 
-        manager = new CarrinhoManager(getApplicationContext(),this);
+         new CarrinhoManager(getApplicationContext(),this);
 
         tv_produtos = findViewById(R.id.tv_carrinhoprodutos);
         tv_frete = findViewById(R.id.tv_frete);
@@ -95,17 +96,25 @@ public class CarrinhoActivity extends AppCompatActivity {
         btn_avancar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it = new Intent(getApplicationContext(),PessoaisActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("cep",et_cep.getText().toString().replace("-",""));
-                it.putExtras(bundle);
-                startActivity(it);
+                if(correios != null && correios.getCep().equals(et_cep.getText().toString())) {
+                    if(!viacep.hadError()) {
+                        Intent it = new Intent(getApplicationContext(), PessoaisActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("cep", et_cep.getText().toString().replace("-", ""));
+                        it.putExtras(bundle);
+                        startActivity(it);
+                    }else
+                        Toast.makeText(getApplicationContext(),"CEP INVÁLIDO OU SERVIÇO INDISPONÍVEL PARA ESTA REGIÃO",Toast.LENGTH_LONG).show();
+                }
+                else
+                    Toast.makeText(getApplicationContext(),"CEP alterado. Por favor, recalcule o frete",Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void calculaFrete(){
-        if(et_cep.length() > 7){
+        if(et_cep.length() == 9){
+            viacep = new Viacep(getApplicationContext(),this,et_cep.getText().toString());
             if(rbPac.isChecked())
                  correios = new Correios(getApplicationContext(),this,Correios.PAC,et_cep.getText().toString(),
                     carrinho,tv_tempo,tv_frete,tv_total,btn_avancar);
@@ -119,11 +128,7 @@ public class CarrinhoActivity extends AppCompatActivity {
             tv_labelfrete.setVisibility(View.VISIBLE);
             tv_tempo.setVisibility(View.VISIBLE);
             et_cep.clearFocus();
-            InputMethodManager inputManager = (InputMethodManager)
-                    getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
 
-            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
         }else
             Toast.makeText(getApplicationContext(),"CEP inválido",Toast.LENGTH_LONG).show();
     }
@@ -159,7 +164,7 @@ public class CarrinhoActivity extends AppCompatActivity {
                 action.goHome();
                 break;
             case R.id.nav_register:
-                Toast.makeText(getApplicationContext(),"chamar cadastro",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_out:
                 action.logout();

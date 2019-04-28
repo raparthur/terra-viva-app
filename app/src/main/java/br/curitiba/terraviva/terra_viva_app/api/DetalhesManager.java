@@ -117,6 +117,11 @@ public class DetalhesManager {
                     }
                 });
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -151,6 +156,11 @@ public class DetalhesManager {
                     }
                 }
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
     //busca o estoque atualizado do produto no servidor a fim de manter o sistema atualizado se ainda é possivel comprar o produto
@@ -163,6 +173,11 @@ public class DetalhesManager {
                 if (response.size() > 0) {
                     produto.setEstoque(Integer.parseInt(response.get(0).get("estoque")));
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }

@@ -49,6 +49,11 @@ public class EstoqueController {
                 else
                     Toast.makeText(context,"Problemas ao efetuar compra - verifique sua conexão!",Toast.LENGTH_LONG).show();
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -74,6 +79,11 @@ public class EstoqueController {
                 else
                     Toast.makeText(context,"Problemas ao atualizar carrinho - tente novamente!",Toast.LENGTH_LONG).show();
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -94,6 +104,11 @@ public class EstoqueController {
                 }
                 else
                     Toast.makeText(context,"Problemas! produto: "+produto+" - qtd: "+qtd,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }
@@ -131,6 +146,11 @@ public class EstoqueController {
                     Session.compras = compras;
 
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }

@@ -89,6 +89,11 @@ public class HomeManager {
                    getDestaques();
                }
            }
+
+           @Override
+           public void onError(String error) {
+
+           }
        });
    }
 
@@ -152,6 +157,11 @@ public class HomeManager {
 
                     }
                 });
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }
@@ -239,6 +249,11 @@ public class HomeManager {
                     tv_subcateg.setVisibility(View.GONE);
 
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }
@@ -335,6 +350,11 @@ public class HomeManager {
                     clearListView("Nenhum produto ainda cadastrado");
                 }
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -425,6 +445,11 @@ public class HomeManager {
                     clearListView("Nenhum produto ainda cadastrado");
                 }
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -513,6 +538,11 @@ public class HomeManager {
                     clearListView("Nenhum produto para o termo pesquisado");
                 }
             }
+
+            @Override
+            public void onError(String error) {
+
+            }
         });
     }
 
@@ -576,6 +606,11 @@ public class HomeManager {
                 if (response.size() > 0) {
                     produto.setEstoque(Integer.parseInt(response.get(0).get("estoque")));
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
         });
     }

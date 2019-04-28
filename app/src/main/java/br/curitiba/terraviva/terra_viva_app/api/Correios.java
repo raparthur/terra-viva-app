@@ -23,30 +23,15 @@ public class Correios{
     public static final int PAC = 2;
     private String prazoFormatado;
     private float valor;
-    private String erro;
     private Context context;
-
-    public Correios(final Context context, Activity activity, int servico, final String destino) {
-        this.context = context;
-        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/frete/" +
-                Session.usuario.getEmail() + "/" + destino + "/" + servico, activity);
-        String[] items = {"prazo", "valor", "erro"};
-        volley.getRequest(items, new VolleyCallback() {
-            @Override
-            public void onSuccess(ArrayList<HashMap<String, String>> response) {
-                if (response.size() > 0) {
-                    int prazo = Integer.parseInt(response.get(0).get("prazo"));
-                    valor = Float.parseFloat(response.get(0).get("valor"));
-                    prazoFormatado = formataDataEntrega(prazo);
-                    setErro(Integer.parseInt(response.get(0).get("erro")));
-                }
-            }
-
-        });
-    }
+    private String cep;
 
     public Correios(final Context context, Activity activity, int servico, final String destino, final float carrinho,
                     final TextView textViewPrazo, final TextView textViewValor, final TextView textViewTotal, final Button avancar) {
+        avancar.setVisibility(View.GONE);
+        textViewPrazo.setText("...");
+        textViewValor.setText("...");
+        textViewTotal.setText("...");
         this.context = context;
         final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/frete/" +
                 Session.usuario.getEmail() + "/" + destino + "/" + servico, activity);
@@ -58,16 +43,37 @@ public class Correios{
                     int prazo = Integer.parseInt(response.get(0).get("prazo"));
                     valor = Float.parseFloat(response.get(0).get("valor"));
                     prazoFormatado = formataDataEntrega(prazo);
-                    setErro(Integer.parseInt(response.get(0).get("erro")));
-
-                    if(erro == null) {
+                    int cod = Integer.parseInt(response.get(0).get("erro"));
+                    if(cod >= 0) {
+                        if(cod != 0){
+                            Toast.makeText(context,getWarning(cod),Toast.LENGTH_LONG).show();
+                        }
                         textViewPrazo.setText(prazoFormatado);
                         textViewValor.setText(Util.formatCurrency(valor));
                         textViewTotal.setText(Util.formatCurrency(carrinho + valor));
+                        cep = destino;
                         avancar.setVisibility(View.VISIBLE);
-                    }else
-                        Toast.makeText(context,erro,Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(context,getErro(Integer.parseInt(response.get(0).get("erro"))),Toast.LENGTH_LONG).show();
+                        avancar.setVisibility(View.GONE);
+                        textViewPrazo.setText("...");
+                        textViewValor.setText("...");
+                        textViewTotal.setText("...");
+                        cep = "";
+                    }
+                }else{
+                    Toast.makeText(context,"Serviço temporiariamente indisponível na região",Toast.LENGTH_LONG).show();
+                    avancar.setVisibility(View.GONE);
+                    textViewPrazo.setText("...");
+                    textViewValor.setText("...");
+                    textViewTotal.setText("...");
+                    cep = "";
                 }
+            }
+
+            @Override
+            public void onError(String error) {
+
             }
 
         });
@@ -81,77 +87,72 @@ public class Correios{
     public String getPrazo(){
         return prazoFormatado;
     }
-    public String getErro(){
-        return this.erro;
+    private String getErro(int codErro){
+        String erro;
+        switch (codErro){
+            case -2:
+                erro = "CEP de origem inválido";
+                break;
+            case -3:
+                erro = "CEP de destino inválido";
+                break;
+            case -4:
+                erro = "Peso excedido";
+                break;
+            case -6:
+                erro = "Serviço indisponível para o trecho informado";
+                break;
+            case -10:
+                erro = "Precificação indisponível para o trecho informado";
+                break;
+            case -15:
+                erro = "O comprimento não pode ser maior que 105 cm";
+                break;
+            case -16:
+                erro = "A largura não pode ser maior que 105 cm";
+                break;
+            case -17:
+                erro = "A altura não pode ser maior que 105 cm.";
+                break;
+            case -23:
+                erro = "A soma resultante do comprimento + largura + altura não deve superar a 200 cm";
+                break;
+            case -28:
+                erro = "O comprimento não pode ser maior que 105 cm";
+                break;
+            default:
+                erro = "Erro ao calcular dados";
+                break;
+        }
+        return erro;
+    }
+    public String getCep(){
+        return this.cep;
     }
 
-    private void setErro(int codErro){
-        if(codErro < 0){
-            switch (codErro){
-                case -2:
-                    erro = "CEP de origem inválido";
-                    break;
-                case -3:
-                    erro = "CEP de destino inválido";
-                    break;
-                case -4:
-                    erro = "Peso excedido";
-                    break;
-                case -6:
-                    erro = "Serviço indisponível para o trecho informado";
-                    break;
-                case -10:
-                    erro = "Precificação indisponível para o trecho informado";
-                    break;
-                case -15:
-                    erro = "O comprimento não pode ser maior que 105 cm";
-                    break;
-                case -16:
-                    erro = "A largura não pode ser maior que 105 cm";
-                    break;
-                case -17:
-                    erro = "A altura não pode ser maior que 105 cm.";
-                    break;
-                case -23:
-                    erro = "A soma resultante do comprimento + largura + altura não deve superar a 200 cm";
-                    break;
-                case -28:
-                    erro = "O comprimento não pode ser maior que 105 cm";
-                    break;
-                default:
-                    erro = "Erro ao calcular dados";
-                    break;
-            }
-
-        }else if(codErro > 0){
+    private String getWarning(int codErro){
+        String erro;
             switch (codErro){
                 case 7:
-                    Toast.makeText(context,"Área com entrega temporariamente sujeita a prazo diferenciado.",Toast.LENGTH_LONG).show();
                     erro = "Localidade de destino não abrange o serviço informado";
                     break;
                 case 8:
-                    Toast.makeText(context,"Serviço indisponível para o trecho informado",Toast.LENGTH_LONG).show();
                     erro = "Serviço indisponível para o trecho informado";
                     break;
                 case 9:
-                    Toast.makeText(context,"CEP inicial pertencente a Área de Risco.",Toast.LENGTH_LONG).show();
-                    erro = null;
+                    erro = "CEP inicial pertencente a Área de Risco.";
                     break;
                 case 10:
-                    Toast.makeText(context,"Área com entrega temporariamente sujeita a prazo diferenciado.",Toast.LENGTH_LONG).show();
-                    erro = null;
+                    erro = "Área com entrega temporariamente sujeita a prazo diferenciado.";
                     break;
                 case 11:
-                    Toast.makeText(context,"CEP inicial e final pertencentes a Área de Risco",Toast.LENGTH_LONG).show();
-                    erro = null;
+                    erro = "CEP inicial e final pertencentes a Área de Risco";
                     break;
                 default:
-                    Toast.makeText(context,"Erro desconhecido ao calcular frete",Toast.LENGTH_LONG).show();
-                    erro = null;
+                    erro = "Erro desconhecido ao calcular frete";
                     break;
             }
-        }else
-            erro = null;
+            return erro;
     }
 
     //formata data de entrega pra extenso e compensa os domingos

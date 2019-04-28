@@ -7,7 +7,7 @@
     tools:context=".activities.EnderecoActivity">
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/img_progress_endereco"
         android:layout_width="248dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -30,17 +30,17 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+        app:layout_constraintTop_toBottomOf="@+id/img_progress_endereco" />
 
     <TextView
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Ludadouro"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_titulo_endereco" />
+        app:layout_constraintTop_toBottomOf="@+id/et_cep" />
 
     <EditText
         android:id="@+id/et_rua"
@@ -49,8 +49,8 @@
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView14"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Num/Apto"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_rua" />
@@ -77,7 +77,7 @@
         android:id="@+id/textView16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Complemento"
         app:layout_constraintStart_toStartOf="@+id/et_compl"
         app:layout_constraintTop_toBottomOf="@+id/et_rua" />
@@ -99,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Bairro"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_num" />
@@ -120,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Cidade"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_bairro" />
@@ -137,23 +137,14 @@
         app:layout_constraintStart_toStartOf="@+id/textView18"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
-    <Spinner
-        android:id="@+id/sp_uf"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_cep"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
-
     <TextView
         android:id="@+id/textView19"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="UF"
-        app:layout_constraintStart_toStartOf="@+id/sp_uf"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_cidade" />
 
     <Button
@@ -161,7 +152,7 @@
         android:layout_width="118dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:background="#8b4513"
         android:text="Avançar"
         android:textColor="#fff"
@@ -173,18 +164,39 @@
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="CEP"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_cidade" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_titulo_endereco" />
 
     <EditText
         android:id="@+id/et_cep"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:ems="10"
         android:inputType="textPostalAddress"
-        app:layout_constraintStart_toStartOf="@+id/textView21"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView21" />
+
+    <Button
+        android:id="@+id/btn_cep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Buscar"
+        app:layout_constraintBottom_toBottomOf="@+id/et_cep"
+        app:layout_constraintStart_toEndOf="@+id/et_cep"
+        app:layout_constraintTop_toTopOf="@+id/et_cep" />
+
+    <EditText
+        android:id="@+id/et_uf"
+        android:layout_width="84dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
 </android.support.constraint.ConstraintLayout>

@@ -101,15 +101,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             menuAction.goHome();
         }
         else if (id == R.id.nav_register) {
-
-            Toast.makeText(this, "cadastrar-se!", Toast.LENGTH_SHORT).show();
-
+            menuAction.partiuCadastro();
         }
         else if (id == R.id.nav_cart) {
             menuAction.goCarrinho();
         }
         else if (id == R.id.nav_profile) {
-            Toast.makeText(this, "ver meu perfil!", Toast.LENGTH_SHORT).show();
+            menuAction.partiuCadastro();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -26,13 +26,14 @@
         </activity>
         <activity
             android:name=".activities.DetalhesActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.CarrinhoActivity"></activity>
-        <activity android:name=".activities.PessoaisActivity"></activity>
-        <activity android:name=".activities.EnderecoActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.CarrinhoActivity" />
+        <activity android:name=".activities.PessoaisActivity" />
+        <activity android:name=".activities.EnderecoActivity" />
+        <activity android:name=".activities.ConfirmacaoActivity"></activity>
     </application>
 
 </manifest>

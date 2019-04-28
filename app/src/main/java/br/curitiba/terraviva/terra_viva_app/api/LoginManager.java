@@ -98,7 +98,12 @@ public class LoginManager {
                 activity.finish();
             }
         }
-    });
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
 }
 //alimenta o carrinho de compras, caso tenha ficado algum parado, e redireciona para DetailsActiviy - quando se estava na tela de detalhes e é clicado no botão "entre para comprar". A idéia é voltar para a tela de detalhes onde parou
 private void redireciona(){
@@ -139,6 +144,11 @@ private void redireciona(){
             Intent it = new Intent(context,DetalhesActivity.class);
             it.putExtras(data);
             activity.startActivity(it);
+        }
+
+        @Override
+        public void onError(String error) {
+
         }
     });
 }
