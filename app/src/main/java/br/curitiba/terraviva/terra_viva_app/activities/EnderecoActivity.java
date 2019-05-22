@@ -7,11 +7,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +26,6 @@ public class EnderecoActivity extends AppCompatActivity {
 
     private EditText et_rua, et_num, et_compl, et_bairro, et_cidade, et_cep, et_uf;
     private Button avancar;
-    private TextView tv_titulo;
-    private ImageView progress;
-    private Button btn_cep;
     Viacep viacep;
 
     @Override
@@ -38,7 +33,7 @@ public class EnderecoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_endereco);
 
-        tv_titulo = findViewById(R.id.tv_titulo_endereco);
+        TextView tv_titulo = findViewById(R.id.tv_titulo_endereco);
         et_rua = findViewById(R.id.et_rua);
         et_num = findViewById(R.id.et_num);
         et_compl = findViewById(R.id.et_compl);
@@ -55,9 +50,9 @@ public class EnderecoActivity extends AppCompatActivity {
         et_cep.addTextChangedListener(MaskEditUtil.mask(et_cep, MaskEditUtil.FORMAT_CEP));
 
         avancar = findViewById(R.id.btn_avancar_entrega);
-        btn_cep = findViewById(R.id.btn_cep);
+        Button btn_cep = findViewById(R.id.btn_cep);
 
-        progress = findViewById(R.id.img_progress_endereco);
+        ImageView progress = findViewById(R.id.img_progressend);
 
 
         btn_cep.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +70,7 @@ public class EnderecoActivity extends AppCompatActivity {
                 /** PROCESSO DE COMPRA
                  */
                 if (data != null && data.getString("cep") != null) {
+                    progress.setVisibility(View.VISIBLE);
                     tv_titulo.setText("DADOS PARA ENTREGA");
                     et_cep.setText(data.getString("cep"));
                     et_cep.setEnabled(false);
@@ -93,7 +89,7 @@ public class EnderecoActivity extends AppCompatActivity {
                     avancar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent newIntent = new Intent(getApplicationContext(), ConfirmacaoActivity.class);
+                            Intent newIntent = new Intent(getApplicationContext(), CadastroActivity.class);
                             Bundle data = it.getExtras();
                             if (data != null) {
                                 Usuario user = (Usuario) data.getSerializable("user");
@@ -128,7 +124,7 @@ public class EnderecoActivity extends AppCompatActivity {
                     avancar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent newIntent = new Intent(getApplicationContext(), ConfirmacaoActivity.class);
+                            Intent newIntent = new Intent(getApplicationContext(), CadastroActivity.class);
                             Bundle data = it.getExtras();
                             if (data != null) {
                                 Usuario user = (Usuario) data.getSerializable("user");
@@ -180,7 +176,7 @@ public class EnderecoActivity extends AppCompatActivity {
                                     user.setCompl(et_compl.getText().toString());
                                     user.setBairro(et_bairro.getText().toString());
 
-                                    Intent newIntent = new Intent(getApplicationContext(), ConfirmacaoActivity.class);
+                                    Intent newIntent = new Intent(getApplicationContext(), CadastroActivity.class);
                                     Bundle data = new Bundle();
                                     data.putSerializable("cadastrouser", user);
                                     newIntent.putExtras(data);
@@ -194,8 +190,6 @@ public class EnderecoActivity extends AppCompatActivity {
 
             }
         }
-        avancar.setText("Cadastrar");
-        progress.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -231,7 +225,7 @@ public class EnderecoActivity extends AppCompatActivity {
                 action.logout();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_cart:
                 action.goCarrinho();

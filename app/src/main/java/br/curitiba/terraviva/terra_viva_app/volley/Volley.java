@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
@@ -24,30 +25,20 @@ public class Volley {
     private String url;
     private Context context;
     private Map params;
-    private ProgressDialog pDialog;
-    private Activity activity = null;
 
-    public Volley(Context context, String url, Activity activity){
+    public Volley(Context context, String url){
         this.url = url;
         this.context = context;
         this.params = new HashMap();
-        this.activity = activity;
     }
 
-    public Volley(Context context, String url, Map params, Activity activity){
+    public Volley(Context context, String url, Map params){
         this.url = url;
         this.context = context;
         this.params = params;
-        this.activity = activity;
     }
 
     public void getRequest(final String[] target, final VolleyCallback callback){
-        if(activity != null){
-            pDialog = new ProgressDialog(activity);
-            pDialog.setMessage("Aguarde...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
         StringRequest postRequest = new StringRequest(com.android.volley.Request.Method.GET, url,
                 new Response.Listener<String>()
                 {
@@ -71,8 +62,6 @@ public class Volley {
                                 lista.add(item);
                             }
 
-                            if (pDialog != null && pDialog.isShowing())
-                                pDialog.dismiss();
                             callback.onSuccess((ArrayList<HashMap<String,String>>) lista);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -83,25 +72,32 @@ public class Volley {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (pDialog != null && pDialog.isShowing())
-                            pDialog.dismiss();
-                        Toast.makeText(context, "Falha de conexão\n " +
-                                "Por favor, tente novamente", Toast.LENGTH_SHORT).show();
                         Log.d("Error response", error.toString());
+                        callback.onError(error.toString());
                     }
                 }
         );
+        postRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 40000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 40000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         RequestQueue queue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         queue.add(postRequest);
     }
 
     public void postRequest(final String[] target, final VolleyCallback callback){
-        if(activity != null){
-            pDialog = new ProgressDialog(activity);
-            pDialog.setMessage("Aguarde...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
         StringRequest postRequest = new StringRequest(com.android.volley.Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
@@ -124,8 +120,6 @@ public class Volley {
                                 lista.add(item);
                             }
 
-                            if (pDialog != null && pDialog.isShowing())
-                                pDialog.dismiss();
                             callback.onSuccess((ArrayList<HashMap<String,String>>) lista);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -136,10 +130,6 @@ public class Volley {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Falha de conexão\n " +
-                                "Por favor, tente novamente", Toast.LENGTH_SHORT).show();
-                        if (pDialog != null && pDialog.isShowing())
-                            pDialog.dismiss();
                         callback.onError(error.toString());
                     }
                 }

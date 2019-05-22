@@ -1,6 +1,5 @@
 package br.curitiba.terraviva.terra_viva_app.activities;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,17 +10,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import br.curitiba.terraviva.terra_viva_app.MaskEditUtil;
+import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.activities.HomeActivity;
 import br.curitiba.terraviva.terra_viva_app.api.LoginManager;
 
 public class LoginActivity extends AppCompatActivity {
     private LoginManager manager;
-    private Intent it;
-    private TextView tv_erro,tv_home,tv_recuperar;
-    private EditText et_email,et_senha;
+    private TextView label_confirmar,tv_enviado;
+    private EditText et_email,et_senha,et_cpf;
     private ImageButton btn_ver;
-    private Button btn_entrar;
+    private Button btn_confirmar;
     private boolean visiblePwd;
 
     @Override
@@ -30,27 +29,44 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         manager = new LoginManager(getApplicationContext(), this);
-        tv_erro = findViewById(R.id.tv_erro_login);
-        tv_home = findViewById(R.id.tv_voltar_login);
-        tv_recuperar = findViewById(R.id.tv_recuperar);
+        TextView tv_erro = findViewById(R.id.tv_erro_login);
+        TextView tv_home = findViewById(R.id.tv_voltar_login);
+        final TextView tv_recuperar = findViewById(R.id.tv_recuperar);
+        label_confirmar = findViewById(R.id.tv_conf_login);
+        tv_enviado = findViewById(R.id.tv_enviado_login);
+        et_cpf = findViewById(R.id.et_cpf_login);
+        btn_confirmar = findViewById(R.id.btn_confirmar_login);
         et_email = findViewById(R.id.et_email);
         et_senha = findViewById(R.id.et_senha);
-        btn_entrar = findViewById(R.id.btn_entrar);
+        Button btn_entrar = findViewById(R.id.btn_entrar);
         btn_ver = findViewById(R.id.btn_ver);
         visiblePwd = false;
         btn_ver.setBackgroundResource(R.drawable.ic_eye);
+        et_cpf.addTextChangedListener(MaskEditUtil.mask(et_cpf, MaskEditUtil.FORMAT_CPF));
 
-        tv_home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                it = new Intent(getApplicationContext(),HomeActivity.class);
-                startActivity(it);
-            }
-        });
         tv_recuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                label_confirmar.setVisibility(View.VISIBLE);
+                et_cpf.setVisibility(View.VISIBLE);
+                btn_confirmar.setVisibility(View.VISIBLE);
+                tv_recuperar.setText("");
+            }
+        });
+
+        btn_confirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                manager.dispararSenha(et_cpf,tv_enviado,btn_confirmar);
+                tv_enviado.setVisibility(View.VISIBLE);
+            }
+        });
+
+        tv_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                (new MenuActions(getApplicationContext(),LoginActivity.this)).goHome();
             }
         });
         btn_ver.setOnClickListener(new View.OnClickListener() {

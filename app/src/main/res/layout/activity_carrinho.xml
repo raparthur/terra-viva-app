@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.CarrinhoActivity">
+    tools:context=".activities.CarrinhoActivity">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scrollView3"
@@ -27,18 +27,18 @@
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="244dp"
-                android:layout_height="50dp"
+                android:layout_width="240dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/carrinho" />
+                app:srcCompat="@drawable/a1progress" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tv_progress_splash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -60,7 +60,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_progress_splash" />
 
             <TextView
                 android:id="@+id/tv_carrinhoprodutos"
@@ -112,7 +112,7 @@
                 android:layout_width="160dp"
                 android:layout_height="41dp"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="number"
                 android:text="Name"
                 app:layout_constraintStart_toStartOf="@+id/textView8"
                 app:layout_constraintTop_toBottomOf="@+id/textView8" />

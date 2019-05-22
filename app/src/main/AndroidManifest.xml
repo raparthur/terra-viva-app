@@ -7,16 +7,37 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label=""
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activities.HomeActivity"
-            android:label=""
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.DetalhesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.CarrinhoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PessoaisActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.EnderecoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.CadastroActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".api.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,16 +45,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.DetalhesActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.CarrinhoActivity" />
-        <activity android:name=".activities.PessoaisActivity" />
-        <activity android:name=".activities.EnderecoActivity" />
-        <activity android:name=".activities.ConfirmacaoActivity"></activity>
+        <activity android:name=".activities.HistoricoActivity" />
+        <activity android:name=".activities.PagtoActivity" />
+        <activity android:name=".activities.FinalizadoActivity"></activity>
     </application>
 
 </manifest>

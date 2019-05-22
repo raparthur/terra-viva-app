@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,10 @@ public class MenuActions {
     }
 
     public void goHome(){
+        ProgressDialog pDialog = new ProgressDialog(activity);
+        pDialog.setMessage("Aguarde...");
+        pDialog.setCancelable(false);
+        pDialog.show();
         Intent it = new Intent(context,HomeActivity.class);
         context.startActivity(it);
         activity.finish();

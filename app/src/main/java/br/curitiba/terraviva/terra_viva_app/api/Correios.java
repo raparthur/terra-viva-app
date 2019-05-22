@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
@@ -25,16 +26,22 @@ public class Correios{
     private float valor;
     private Context context;
     private String cep;
+    private ProgressDialog pDialog;
 
     public Correios(final Context context, Activity activity, int servico, final String destino, final float carrinho,
                     final TextView textViewPrazo, final TextView textViewValor, final TextView textViewTotal, final Button avancar) {
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage("Conectando-se ao Correios...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
         avancar.setVisibility(View.GONE);
         textViewPrazo.setText("...");
         textViewValor.setText("...");
         textViewTotal.setText("...");
         this.context = context;
         final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/frete/" +
-                Session.usuario.getEmail() + "/" + destino + "/" + servico, activity);
+                Session.usuario.getEmail() + "/" + destino + "/" + servico);
         String[] items = {"prazo", "valor", "erro"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -49,7 +56,9 @@ public class Correios{
                             Toast.makeText(context,getWarning(cod),Toast.LENGTH_LONG).show();
                         }
                         textViewPrazo.setText(prazoFormatado);
+                        Session.prazo = prazoFormatado;
                         textViewValor.setText(Util.formatCurrency(valor));
+                        Session.frete = valor;
                         textViewTotal.setText(Util.formatCurrency(carrinho + valor));
                         cep = destino;
                         avancar.setVisibility(View.VISIBLE);
@@ -69,11 +78,15 @@ public class Correios{
                     textViewTotal.setText("...");
                     cep = "";
                 }
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
             }
 
             @Override
             public void onError(String error) {
-
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
+                Toast.makeText(context,"Servidor demorou muito para responder. Tente novamente",Toast.LENGTH_LONG).show();
             }
 
         });

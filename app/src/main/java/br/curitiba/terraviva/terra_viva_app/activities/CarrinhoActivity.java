@@ -7,18 +7,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import br.curitiba.terraviva.terra_viva_app.MaskEditUtil;
 import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.api.CarrinhoManager;
+import br.curitiba.terraviva.terra_viva_app.Session;
+import br.curitiba.terraviva.terra_viva_app.adapter.CarrinhoListCell;
 import br.curitiba.terraviva.terra_viva_app.api.Correios;
 import br.curitiba.terraviva.terra_viva_app.api.Viacep;
 import br.curitiba.terraviva.terra_viva_app.model.Compra;
@@ -28,31 +33,34 @@ import static br.curitiba.terraviva.terra_viva_app.Util.formatCurrency;
 
 public class CarrinhoActivity extends AppCompatActivity {
 
-    TextView tv_produtos,tv_frete,tv_total,tv_labelfrete,tv_labeltotal,tv_tempo;
-    EditText et_cep;
-    ListView lv_carrinho;
-    Button btn_calcular,btn_avancar;
-    float carrinho=0;
-    Correios correios;
-    RadioButton rbPac,rbSedex;
-    Viacep viacep;
+    private TextView tv_frete;
+    private TextView tv_total;
+    private TextView tv_labelfrete;
+    private TextView tv_labeltotal;
+    private TextView tv_tempo;
+    private EditText et_cep;
+    private Button btn_avancar;
+    private float carrinho=0;
+    private Correios correios;
+    private RadioButton rbPac,rbSedex;
+    private Viacep viacep;
+    private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carrinho);
 
-         new CarrinhoManager(getApplicationContext(),this);
+        setAdapter(Session.compras);
 
-        tv_produtos = findViewById(R.id.tv_carrinhoprodutos);
+        TextView tv_produtos = findViewById(R.id.tv_carrinhoprodutos);
         tv_frete = findViewById(R.id.tv_frete);
         tv_total = findViewById(R.id.tv_carrinhototal);
         tv_labelfrete = findViewById(R.id.tv_labelfrete);
         tv_labeltotal = findViewById(R.id.tv_labeltotal);
         tv_tempo = findViewById(R.id.tv_tempo);
         et_cep = findViewById(R.id.et_cepcarrinho);
-        lv_carrinho = findViewById(R.id.lv_carrinho);
-        btn_calcular = findViewById(R.id.btn_calcularfrete);
+        Button btn_calcular = findViewById(R.id.btn_calcularfrete);
         btn_avancar = findViewById(R.id.btn_carrinhoavancar);
         rbPac = findViewById(R.id.rb_pac);
         rbSedex = findViewById(R.id.rb_sedex);
@@ -170,15 +178,70 @@ public class CarrinhoActivity extends AppCompatActivity {
                 action.logout();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_cart:
-                //action.goCarrinho();
+                action.goCarrinho();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void setAdapter(final List<Compra> compras){
+        final Integer[] ids_prod = new Integer[compras.size()];
+        final String[] nomes = new String[compras.size()];
+        final String[] qtd = new String[compras.size()];
+        final String[] images = new String[compras.size()];
+        final float[] valores = new float[compras.size()];
+
+        int i = 0;
+        for (Compra compra : Session.compras) {
+            if(compra != null){
+                ids_prod[i] = compras.get(i).getProduto().getId();
+                nomes[i] = compras.get(i).getProduto().getNome();
+                qtd[i] = String.valueOf(compras.get(i).getQtd());
+                images[i] = compras.get(i).getProduto().getImg();
+                valores[i] = compras.get(i).getProduto().getValor();
+
+
+                i++;
+            }
+        }
+        CarrinhoListCell adapter = new CarrinhoListCell(this,nomes,valores,qtd,images);
+        ListView lv_carrinho = findViewById(R.id.lv_carrinho);
+        lv_carrinho.setAdapter(adapter);
+
+        //definir tamanho listview
+        ViewGroup.LayoutParams lp = lv_carrinho.getLayoutParams();
+        lp.height = getItemHeightofListView(lv_carrinho,compras.size());
+        lv_carrinho.setLayoutParams(lp);
+
+        lv_carrinho.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                Intent it = new Intent(getApplicationContext(),DetalhesActivity.class);
+                Bundle data = new Bundle();
+                data.putSerializable("produto",compras.get(position).getProduto());
+                it.putExtras(data);
+                startActivity(it);
+            }
+        });
+    }
+
+    private static int getItemHeightofListView(ListView listView, int items) {
+        ListAdapter adapter = listView.getAdapter();
+
+        int grossElementHeight = 0;
+        for (int i = 0; i < items; i++) {
+            View childView = adapter.getView(i, null, listView);
+            childView.measure(UNBOUNDED, UNBOUNDED);
+            grossElementHeight += childView.getMeasuredHeight();
+        }
+        return grossElementHeight;
     }
 
 

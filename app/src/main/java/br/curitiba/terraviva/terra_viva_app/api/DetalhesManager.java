@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ public class DetalhesManager {
     private ListView lv_relacionados;
     private List<Produto> produtos;
     private static final int UNBOUNDED = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+    private ProgressDialog pDialog;
 
     public DetalhesManager(final Context ctx, Activity activity, View view) {
         this.ctx = ctx;
@@ -44,11 +46,20 @@ public class DetalhesManager {
 
     //apresenta a lista de produto recomendados (nesse caso, simplesmente aqueles que estão na mesma subcategoria)
     public void getRecomendados(final Produto produto){
-        final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/prod_por_subcat/" + produto.getCateg(),activity);
+
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage("Buscando produtos...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/prod_por_subcat/" + produto.getCateg());
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
+
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
 
                 produtos = new ArrayList<>();
                 for (HashMap<String,String> hash : response) {
@@ -96,7 +107,7 @@ public class DetalhesManager {
 
                 //definir tamanho listview
                 ViewGroup.LayoutParams lp = lv_relacionados.getLayoutParams();
-                lp.height = getItemHeightofListView(lv_relacionados,produtos.size());
+                lp.height = getItemHeightofListView(lv_relacionados,produtos.size())/2;
                 lv_relacionados.setLayoutParams(lp);
 
                 lv_relacionados.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -121,10 +132,12 @@ public class DetalhesManager {
             @Override
             public void onError(String error) {
 
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
             }
         });
     }
-
+/*
     //atualiza o carrino no servidor
     public void setCompras(){
         final Volley volley = new Volley(ctx, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
@@ -163,9 +176,10 @@ public class DetalhesManager {
             }
         });
     }
+    */
     //busca o estoque atualizado do produto no servidor a fim de manter o sistema atualizado se ainda é possivel comprar o produto
     public void getEstoque(final Produto produto){
-        Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId(),activity);
+        Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId());
         String[] items = {"estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override

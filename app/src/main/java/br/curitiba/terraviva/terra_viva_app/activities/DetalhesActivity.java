@@ -37,7 +37,7 @@ public class DetalhesActivity extends AppCompatActivity {
 
             //chama o fragmento
             Fragment argumentFragment = new DetalhesFragment();
-            fragmentManager.beginTransaction().replace(R.id.frame_container, argumentFragment).commit();//now replace the argument fragment
+            fragmentManager.beginTransaction().replace(R.id.frame_container, argumentFragment).commit();
 
         }
     }
@@ -75,7 +75,7 @@ public class DetalhesActivity extends AppCompatActivity {
                 action.logout();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_cart:
                 action.goCarrinho();

@@ -31,11 +31,8 @@ import static br.curitiba.terraviva.terra_viva_app.Util.isValid;
 public class PessoaisActivity extends AppCompatActivity {
 
     private EditText et_nome, et_email, et_nasc, et_tel, et_cel, et_cpf, et_senha, et_confirm;
-    private TextView label_senha, label_confirm;
-    private RadioGroup rg_tel;
     private RadioButton rb_fixo, rb_cel;
-    private Button avancar;
-    private ImageView progress;
+    private boolean editar = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +48,15 @@ public class PessoaisActivity extends AppCompatActivity {
         et_senha = findViewById(R.id.et_senha_p);
         et_confirm = findViewById(R.id.et_confirm_p);
 
-        label_confirm = findViewById(R.id.tv_label_confirm_p);
-        label_senha = findViewById(R.id.tv_label_senha);
+        TextView label_confirm = findViewById(R.id.tv_label_confirm_p);
+        TextView label_senha = findViewById(R.id.tv_label_senha);
 
-        rg_tel = findViewById(R.id.rg_pessoais);
         rb_cel = findViewById(R.id.rb_cel_pessoais);
         rb_fixo = findViewById(R.id.rb_fixo_pessoais);
 
-        avancar = findViewById(R.id.btn_avancar_pessoais);
+        Button avancar = findViewById(R.id.btn_avancar_pessoais);
 
-        progress = findViewById(R.id.img_progress_p);
+        ImageView progress = findViewById(R.id.img_progress_p);
 
         et_cel.setVisibility(View.GONE);
         rb_fixo.setChecked(true);
@@ -85,14 +81,20 @@ public class PessoaisActivity extends AppCompatActivity {
         });
 
         if (usuario != null) {
+            et_nasc.setEnabled(false);
+            et_cpf.setEnabled(false);
+            et_email.setEnabled(false);
             Intent prev = getIntent();
             if (prev == null || prev.getExtras() == null) {
                 progress.setVisibility(View.INVISIBLE);
+                editar = true;
+            }else if(prev.getExtras().getString("cep") != null){
+                et_confirm.setVisibility(View.GONE);
+                et_senha.setVisibility(View.GONE);
+                label_senha.setVisibility(View.GONE);
+                label_confirm.setVisibility(View.GONE);
+                editar = false;
             }
-            label_senha.setVisibility(View.GONE);
-            label_confirm.setVisibility(View.GONE);
-            et_confirm.setVisibility(View.GONE);
-            et_senha.setVisibility(View.GONE);
             //decide se o tel cadastrado é fixo ou celular
             if (usuario.getTel().length() == 8) {
                 et_cel.setVisibility(View.GONE);
@@ -121,44 +123,47 @@ public class PessoaisActivity extends AppCompatActivity {
                 if (!Util.isEmpty(et_nome) && Util.isCPF(et_cpf) && isEmail(et_email) && isValid(10, "Data inválida", et_nasc)) {
                     if ((rb_cel.isChecked() && Util.isValid(14, "Formato incorreto de celular", et_cel) ||
                             rb_fixo.isChecked() && Util.isValid(13, "Formato incorreto de telefone", et_tel))) {
+                        if(!editar || (Util.isValidPwd(et_senha,et_confirm))) {
 
-                        Usuario u = new Usuario();
-                        u.setEmail(et_email.getText().toString());
-                        u.setNome(et_nome.getText().toString());
-                        u.setCpf(Util.clearCpf(et_cpf.getText().toString()));
-                        String ddd, tel;
-                        if (rb_fixo.isChecked()) {
-                            ddd = et_tel.getText().toString().substring(1, 2);
-                            tel = et_tel.getText().toString().substring(4);
-                        } else {
-                            ddd = et_cel.getText().toString().substring(1, 2);
-                            tel = et_cel.getText().toString().substring(4);
-                        }
-                        u.setTel(tel);
-                        u.setDdd(ddd);
-                        u.setNasc(Util.strToDate(et_nasc.getText().toString(), "dd/MM/yyyy"));
-                        Intent it = new Intent(getApplicationContext(), EnderecoActivity.class);
-                        if (usuario != null) {
-                            Intent old = getIntent();
-                            Bundle bundle = new Bundle();
-                            if(old != null){
-                                Bundle cep = old.getExtras();
-                                if(cep != null){
+                            Usuario u = new Usuario();
+                            u.setEmail(et_email.getText().toString());
+                            u.setNome(et_nome.getText().toString());
+                            u.setCpf(Util.clearCpf(et_cpf.getText().toString()));
+                            String ddd, tel;
+                            if (rb_fixo.isChecked()) {
+                                ddd = et_tel.getText().toString().substring(1, 3);
+                                tel = et_tel.getText().toString().substring(4);
+                            } else {
+                                ddd = et_cel.getText().toString().substring(1, 3);
+                                tel = et_cel.getText().toString().substring(4);
+                            }
+                            u.setTel(tel);
+                            u.setDdd(ddd);
+                            u.setNasc(Util.strToDate(et_nasc.getText().toString(), "dd/MM/yyyy"));
+                            u.setSenha(et_senha.getText().toString());
+                            Intent it = new Intent(getApplicationContext(), EnderecoActivity.class);
+                            if (usuario != null) {
+                                Intent old = getIntent();
+                                Bundle bundle = new Bundle();
+                                if (old != null) {
+                                    Bundle cep = old.getExtras();
+                                    if (cep != null) {
 
-                                        bundle.putString("cep",cep.getString("cep"));
+                                        bundle.putString("cep", cep.getString("cep"));
 
                                     }
                                 }
-                            bundle.putSerializable("user", u);
-                            it.putExtras(bundle);
-                            startActivity(it);
-                        } else {
-                            if (Util.isValidPwd(et_senha, et_confirm)) {
-                                u.setSenha((et_senha.getText().toString()));
-                                Bundle data = new Bundle();
-                                data.putSerializable("user", u);
-                                it.putExtras(data);
+                                bundle.putSerializable("user", u);
+                                it.putExtras(bundle);
                                 startActivity(it);
+                            } else {
+                                if (Util.isValidPwd(et_senha, et_confirm)) {
+                                    u.setSenha((et_senha.getText().toString()));
+                                    Bundle data = new Bundle();
+                                    data.putSerializable("user", u);
+                                    it.putExtras(data);
+                                    startActivity(it);
+                                }
                             }
                         }
                     }
@@ -200,7 +205,7 @@ public class PessoaisActivity extends AppCompatActivity {
                 action.logout();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_cart:
                 action.goCarrinho();

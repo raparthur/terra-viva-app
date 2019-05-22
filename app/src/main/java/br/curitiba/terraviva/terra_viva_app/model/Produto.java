@@ -1,5 +1,6 @@
 package br.curitiba.terraviva.terra_viva_app.model;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;

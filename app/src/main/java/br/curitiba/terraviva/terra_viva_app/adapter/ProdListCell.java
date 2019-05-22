@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app.adapter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -27,6 +28,7 @@ public class ProdListCell extends ArrayAdapter<String> {
     private final String[] curtaProd;
     private final String[] valorProd;
     private final String[] imgProd;
+    private ProgressDialog pDialog;
 
     public ProdListCell(Activity context, String[] nomeProd, String[] curtaProd, String[] valorProd, String[] imgProd){
         super(context,R.layout.list_cell_prod,nomeProd);
@@ -73,6 +75,8 @@ public class ProdListCell extends ArrayAdapter<String> {
                         progressBar.setVisibility(View.INVISIBLE);
                         imageView.setVisibility(View.VISIBLE);
                         imageView.setImageBitmap(imgAux);
+                        if (pDialog != null && pDialog.isShowing())
+                            pDialog.dismiss();
 
                     }
                 });

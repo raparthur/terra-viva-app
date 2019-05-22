@@ -32,7 +32,7 @@ public class EstoqueController {
         params.put("prod", String.valueOf(produto.getId()));
         params.put("qtd", String.valueOf(qtd));
 
-        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/comprar",params, activity);
+        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/comprar",params);
         String[] dados = {"id"};
         volley.postRequest(dados, new VolleyCallback() {
             @Override
@@ -42,7 +42,7 @@ public class EstoqueController {
                     btn_cart.setText("Remover do\n carrinho");
                     btn_cart.setBackgroundColor(0xffcc0000);
                     atualizaEstoque(produto.getId(), produto.getEstoque() - qtd);
-                    //Toast.makeText(context,"Produto adicionado ao carrinho",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context,"Produto adicionado ao carrinho",Toast.LENGTH_LONG).show();
                     HomeManager manager = new HomeManager(context,activity);
                     atualizaListaCompra();
                 }
@@ -61,7 +61,7 @@ public class EstoqueController {
         Map<String,String> params = new HashMap<>();
         params.put("id", String.valueOf(compra.getId()));
 
-        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/desfaz_compra",params, activity);
+        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/desfaz_compra",params);
         String[] dados = {"affected"};
         volley.postRequest(dados, new VolleyCallback() {
             @Override
@@ -92,14 +92,14 @@ public class EstoqueController {
         params.put("produto", String.valueOf(produto));
         params.put("qtd", String.valueOf(qtd));
 
-        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/atualiza_estoque",params, activity);
+        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/atualiza_estoque",params);
         String[] dados = {"affected"};
         volley.postRequest(dados, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
 
                 if(Integer.parseInt(response.get(0).get("affected")) > 0){
-                    Toast.makeText(context,"quantidade atualizada",Toast.LENGTH_LONG).show();
+                   //Toast.makeText(context,"Quantidade atualizada",Toast.LENGTH_LONG).show();
                     atualizaListaCompra();
                 }
                 else
@@ -115,7 +115,7 @@ public class EstoqueController {
 
     //salva o status atual do carrinho de compras no servidor
     public void atualizaListaCompra(){
-        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
+        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail());
         String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
         volley.getRequest(items, new VolleyCallback() {
 

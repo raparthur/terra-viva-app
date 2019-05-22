@@ -7,16 +7,17 @@
     tools:context=".activities.EnderecoActivity">
 
     <ImageView
-        android:id="@+id/img_progress_endereco"
-        android:layout_width="248dp"
+        android:id="@+id/img_progressend"
+        android:layout_width="240dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pessoais" />
+        app:srcCompat="@drawable/a3progress" />
 
     <TextView
         android:id="@+id/tv_titulo_endereco"
@@ -30,7 +31,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_progress_endereco" />
+        app:layout_constraintTop_toBottomOf="@+id/img_progressend" />
 
     <TextView
         android:id="@+id/textView14"
@@ -176,7 +177,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:ems="10"
-        android:inputType="textPostalAddress"
+        android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView21" />
 

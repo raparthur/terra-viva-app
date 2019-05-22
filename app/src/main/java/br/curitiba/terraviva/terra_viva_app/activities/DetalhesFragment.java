@@ -44,21 +44,21 @@ import static br.curitiba.terraviva.terra_viva_app.Util.formatCurrency;
  */
 public class DetalhesFragment extends Fragment {
 
-    private Handler handler = new Handler();
-    View view;
-    TextView tv_nome, tv_curta, tv_longa, tv_valor, tv_qtd, tv_total;
-    Button btn_cart, btn_vermais, btn_finalizar;
-    ImageButton btn_up, btn_down;
-    ImageView img_prod;
-    ListView lv_relacionados;
-    ProgressBar progressBar;
-    DetalhesManager manager;
-    EstoqueController controller;
-    MenuActions action;
-    int qtd = 1;
-    float total;
-    boolean comprado = false;
-    boolean estaNoCarrinho = false;
+    private Handler handler;
+    private TextView tv_longa;
+    private TextView tv_qtd;
+    private TextView tv_total;
+    private Button btn_cart;
+    private Button btn_vermais;
+    private ImageView img_prod;
+    private ProgressBar progressBar;
+    private DetalhesManager manager;
+    private EstoqueController controller;
+    private MenuActions action;
+    private int qtd = 1;
+    private float total;
+    private boolean comprado = false;
+    private boolean estaNoCarrinho = false;
 
     public DetalhesFragment() {
         // Required empty public constructor
@@ -66,8 +66,9 @@ public class DetalhesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_details, container, false);//Inflate Layout
+        View view = inflater.inflate(R.layout.fragment_details, container, false);
 
+        handler = new Handler();
         if (getArguments() != null){
             produto = (Produto) getArguments().getSerializable("produto");
         }
@@ -78,19 +79,19 @@ public class DetalhesFragment extends Fragment {
         controller = new EstoqueController(getContext(), getActivity());
 
         progressBar = view.findViewById(R.id.progressBarDetails);
-        tv_nome = view.findViewById(R.id.tv_nome_details);
-        tv_curta = view.findViewById(R.id.tv_curta_details);
+        TextView tv_nome = view.findViewById(R.id.tv_nome_details);
+        TextView tv_curta = view.findViewById(R.id.tv_curta_details);
         tv_longa = view.findViewById(R.id.tv_longa_details);
-        tv_valor = view.findViewById(R.id.tv_valor_details);
+        TextView tv_valor = view.findViewById(R.id.tv_valor_details);
         tv_qtd = view.findViewById(R.id.tv_qtd);
         tv_total = view.findViewById(R.id.tv_total_details);
-        btn_up = view.findViewById(R.id.btn_up);
-        btn_down = view.findViewById(R.id.btn_down);
+        ImageButton btn_up = view.findViewById(R.id.btn_up);
+        ImageButton btn_down = view.findViewById(R.id.btn_down);
         btn_cart = view.findViewById(R.id.btn_cart);
         btn_vermais = view.findViewById(R.id.btn_ver_mais);
-        btn_finalizar = view.findViewById(R.id.btn_finalizar);
+        Button btn_finalizar = view.findViewById(R.id.btn_finalizar);
         img_prod = view.findViewById(R.id.img_prod_details);
-        lv_relacionados = view.findViewById(R.id.lv_relacionados);
+        ListView lv_relacionados = view.findViewById(R.id.lv_relacionados);
 
         //inicialmente a descrição curta é invisivel
         tv_longa.setVisibility(View.GONE);
@@ -99,6 +100,7 @@ public class DetalhesFragment extends Fragment {
 
         //se não logado vai para a tela de login
         if (usuario == null) {
+            btn_finalizar.setVisibility(View.GONE);
             btn_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -114,15 +116,15 @@ public class DetalhesFragment extends Fragment {
             //percorre a lista de compras salva na sessao e informa o sistema e verifica produto já está no carrinho
             if (compras != null && compras.size() > 0) {
                 for (Compra c : compras) {
-                    if (c.getUsuario().equals(usuario.getEmail())) {
+                    if (c.getProduto().getId() == produto.getId()){
                         estaNoCarrinho = true;
                         break;
                     }
                 }
-                if (estaNoCarrinho) {
+                if (estaNoCarrinho){
                     for (Compra c : compras)
                         //substitui a escrita no botão "comprar", caso positivo
-                        if (c.getProduto().getId() == produto.getId()) {
+                        if (c.getProduto().getId() == produto.getId()){
                             btn_cart.setText("Remover do\ncarrinho");
                             btn_cart.setBackgroundColor(0xffcc0000);
                             qtd = c.getQtd();

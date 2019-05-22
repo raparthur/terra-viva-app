@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import br.curitiba.terraviva.terra_viva_app.volley.VolleyCallback;
 public class Viacep {
     private String cep;
     private boolean error = true;
+    private ProgressDialog pDialog;
 
     public String getCep(){
         return this.cep;
@@ -29,8 +31,13 @@ public class Viacep {
     }
     public Viacep(final Context context,final Activity activity,final boolean backOnError,final EditText et_cep,final Button avancar,
                   final EditText bairro, final EditText cidade, final EditText rua, final EditText uf,final EditText... editTexts) {
+        pDialog = new ProgressDialog(activity);
+        pDialog.setMessage("Buscando endereço...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
         final String CleanCep = et_cep.getText().toString().replace("-","");
-        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/viacep/" + CleanCep, activity);
+        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/viacep/" + CleanCep);
         String[] items = {"rua", "cep","bairro", "localidade", "uf"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -62,17 +69,22 @@ public class Viacep {
                     }
                     avancar.setEnabled(false);
                 }
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
             }
 
             @Override
             public void onError(String error) {
-
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
+                Toast.makeText(context,"Falha na conexão com o servidor Viacep. Tente novamente",Toast.LENGTH_LONG).show();
             }
         });
     }
     public Viacep(final Context context,final Activity activity,String cep) {
+
         final String CleanCep = cep.replace("-","");
-        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/viacep/" + CleanCep, activity);
+        final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/viacep/" + CleanCep);
         String[] items = {"rua", "cep","bairro", "localidade", "uf"};
         volley.getRequest(items, new VolleyCallback() {
             @Override

@@ -1,10 +1,13 @@
 package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.Session;
 import br.curitiba.terraviva.terra_viva_app.Util;
@@ -30,17 +34,56 @@ import static br.curitiba.terraviva.terra_viva_app.Util.strToDate;
 public class LoginManager {
     private Context context;
     private Activity activity;
+    private MenuActions action;
+    private ProgressDialog pDialog;
 
     public LoginManager(Context context, Activity activity){
         this.context = context;
         this.activity = activity;
+        action = new MenuActions(context,activity);
+        pDialog = new ProgressDialog(activity);
+    }
+
+    public void dispararSenha(final EditText cpf, final TextView retorno,final Button enviar){
+        Map<String,String> params = new HashMap<>();
+        params.put("cpf", cpf.getText().toString().replace("-","").replace(".",""));
+        Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/recuperar",params);
+        String[] dados = {"email"};
+        pDialog.setMessage("Procurando conta...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+        volley.postRequest(dados, new VolleyCallback() {
+            @Override
+            public void onSuccess(ArrayList<HashMap<String, String>> response) {
+                if(!response.get(0).get("email").equals("")){
+                    retorno.setText("Enviado instruções para '"+response.get(0).get("email").toUpperCase()+"'.\n " +
+                            "Verifique também sua caixa de span, se necessário");
+                    cpf.setEnabled(false);
+                    enviar.setEnabled(false);
+                }else{
+                    retorno.setText("Nenhuma conta encontrada");
+                }
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
+            }
+
+            @Override
+            public void onError(String error) {
+                retorno.setText("Falha ao cominicar-se com o servidor. Tente novamente");
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
+            }
+        });
     }
 
     public void login(String email,String senha){
     Map<String,String> params = new HashMap<>();
         params.put("email", email);
         params.put("pwd", senha);
-    Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/login",params, activity);
+        pDialog.setMessage("Procurando conta...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+    Volley volley = new Volley(context,"https://terraviva.curitiba.br/user/login",params);
     String[] dados = {"email","nome","cpf","rua","num","compl","bairro","cidade","uf","nasc","cep","ddd","tel"};
         volley.postRequest(dados, new VolleyCallback() {
         @Override
@@ -63,7 +106,6 @@ public class LoginManager {
                 Date date = Util.strToDate(response.get(0).get("nasc"),"yyyy-MM-dd");
                 Session.usuario.setNasc(date);
 
-
                 EstoqueController controller = new EstoqueController(context,activity);
                 controller.atualizaListaCompra();
 
@@ -81,33 +123,33 @@ public class LoginManager {
                         Session.produto = (Produto)bundle.getSerializable("produto");
                         //inserir nova HomeActivity (agora com usuario logado) por baixo da pilha antes de ir para DetailsActivity
                         //(evita que apareça a HomeActivity que ainda não estava logada)
-                        Intent it = new Intent(context,HomeActivity.class);
-                        context.startActivity(it);
+                        action.goHome();
                         //vai para DetaisActivity com o ultimo produto clicado em foco, armazenado em "Session.produto".
                         redireciona();
                     }
                     else{
-                        Intent it = new Intent(context,HomeActivity.class);
-                        context.startActivity(it);
+                        action.goHome();
                     }
                 }
                 else{
-                    Intent it = new Intent(context,HomeActivity.class);
-                    context.startActivity(it);
+                    action.goHome();
                 }
                 activity.finish();
             }
+            if (pDialog != null && pDialog.isShowing())
+                pDialog.dismiss();
         }
 
             @Override
             public void onError(String error) {
-
+                if (pDialog != null && pDialog.isShowing())
+                    pDialog.dismiss();
             }
         });
 }
 //alimenta o carrinho de compras, caso tenha ficado algum parado, e redireciona para DetailsActiviy - quando se estava na tela de detalhes e é clicado no botão "entre para comprar". A idéia é voltar para a tela de detalhes onde parou
 private void redireciona(){
-    final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail(),activity);
+    final Volley volley = new Volley(context, "https://terraviva.curitiba.br/api/listar_compras/"+Session.usuario.getEmail());
     String[] items = {"compra","produto","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","qtd"};
     volley.getRequest(items, new VolleyCallback() {
 
@@ -144,11 +186,16 @@ private void redireciona(){
             Intent it = new Intent(context,DetalhesActivity.class);
             it.putExtras(data);
             activity.startActivity(it);
+
+            if (pDialog != null && pDialog.isShowing())
+                pDialog.dismiss();
         }
 
         @Override
         public void onError(String error) {
 
+            if (pDialog != null && pDialog.isShowing())
+                pDialog.dismiss();
         }
     });
 }

@@ -6,42 +6,26 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import br.curitiba.terraviva.terra_viva_app.MenuActions;
 import br.curitiba.terraviva.terra_viva_app.R;
-import br.curitiba.terraviva.terra_viva_app.model.Usuario;
+import br.curitiba.terraviva.terra_viva_app.api.HistoricoManager;
 
 import static br.curitiba.terraviva.terra_viva_app.Session.usuario;
 
-public class ConfirmacaoActivity extends AppCompatActivity {
+public class HistoricoActivity extends AppCompatActivity {
+
+    ListView historico;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_confirmacao);
+        setContentView(R.layout.activity_historico);
 
-        Intent it = getIntent();
-        Bundle bundle = it.getExtras();
-        if(bundle != null){
-            if(bundle.getSerializable("comprauser") != null){
-                Usuario user = (Usuario)bundle.getSerializable("comprauser");
-
-               //todo code here..
-            }else
-            if(bundle.getSerializable("cadastrouser") != null){
-                Usuario user = (Usuario)bundle.getSerializable("cadastrouser");
-
-                //todo code here..
-            }else
-            if(bundle.getSerializable("perfiluser") != null){
-                Usuario user = (Usuario)bundle.getSerializable("perfiluser");
-
-                //todo code here..
-            }else
-                Toast.makeText(getApplicationContext(),"ERRO",Toast.LENGTH_SHORT).show();
-        }else
-            Toast.makeText(getApplicationContext(),"ERRO",Toast.LENGTH_SHORT).show();
+        historico = findViewById(R.id.lv_hist);
+        HistoricoManager manager = new HistoricoManager(getApplicationContext(),this);
+        manager.getVendas(usuario);
     }
 
     @Override
@@ -77,7 +61,7 @@ public class ConfirmacaoActivity extends AppCompatActivity {
                 action.logout();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(getApplicationContext(),"editar perfil",Toast.LENGTH_SHORT).show();
+                action.partiuCadastro();
                 break;
             case R.id.nav_cart:
                 action.goCarrinho();

@@ -10,39 +10,41 @@
 
     <ImageView
         android:id="@+id/img_prod"
-        android:layout_width="103dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_nome_prod"
-        android:layout_width="214dp"
-        android:layout_height="52dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:text="Nome do produto"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#00ff00"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tv_valor_prod"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/adapter_img"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/img_prod"
+        app:layout_constraintTop_toTopOf="@+id/img_prod" />
 
     <TextView
         android:id="@+id/tv_curta_prod"
-        android:layout_width="273dp"
-        android:layout_height="60dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Descrição curta do produto"
         android:textColor="#8b4513"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_prod"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/img_prod"
+        app:layout_constraintStart_toEndOf="@+id/progressBar"
         app:layout_constraintTop_toBottomOf="@+id/tv_nome_prod" />
 
     <TextView
@@ -52,17 +54,17 @@
         android:layout_marginEnd="8dp"
         android:text="R$ 9,90"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_nome_prod"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_nome_prod" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
-        android:layout_width="77dp"
+        android:layout_width="0dp"
         android:layout_height="97dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_prod"
+        app:layout_constraintEnd_toEndOf="@+id/img_prod"
+        app:layout_constraintStart_toStartOf="@+id/img_prod"
+        app:layout_constraintTop_toTopOf="@+id/img_prod" />
 </android.support.constraint.ConstraintLayout>

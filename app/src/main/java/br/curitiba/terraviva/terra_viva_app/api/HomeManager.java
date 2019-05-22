@@ -1,6 +1,7 @@
 package br.curitiba.terraviva.terra_viva_app.api;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,15 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.text.NumberFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+
 import br.curitiba.terraviva.terra_viva_app.R;
 import br.curitiba.terraviva.terra_viva_app.adapter.ProdListCell;
 import br.curitiba.terraviva.terra_viva_app.adapter.RecyclerView;
@@ -53,6 +55,7 @@ public class HomeManager {
     private static final String TAG = "HomeFragment";
     private Categoria selectedCateg;
     private ImageView banner;
+    private ProgressDialog pDialog;
 
     public HomeManager(final Context ctx, Activity activity) {
         this.ctx = ctx;
@@ -67,7 +70,7 @@ public class HomeManager {
 
 
    public void getCategorias(){
-       volley = new Volley(ctx,"https://terraviva.curitiba.br/api/categorias",activity);
+       volley = new Volley(ctx,"https://terraviva.curitiba.br/api/categorias");
        String[] items = {"id","nome","img"};
        volley.getRequest(items, new VolleyCallback() {
            @Override
@@ -98,7 +101,7 @@ public class HomeManager {
    }
 
     private void getSubCategorias(final int categoria){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/subcategorias/"+categoria,activity);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/subcategorias/"+categoria);
         String[] items = {"id","nome"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -167,12 +170,11 @@ public class HomeManager {
     }
 
     public void getDestaques(){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/destaques",activity);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/destaques");
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
             public void onSuccess(ArrayList<HashMap<String, String>> response) {
-
 
                 if(response.size() > 0){
 
@@ -261,7 +263,7 @@ public class HomeManager {
 
     public void getProdutosCateg(final int id_categoria){
 
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_categ/"+id_categoria,activity);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_categ/"+id_categoria);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -361,7 +363,7 @@ public class HomeManager {
 
     private void getProdutosSubcat(final Subcateg subcateg){
         tv_titulo.setText(selectedCateg.getNome());
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_subcat/"+subcateg.getId(),activity);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/prod_por_subcat/"+subcateg.getId());
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -454,7 +456,7 @@ public class HomeManager {
     }
 
     public void getProdutosPesquisa(final String termo){
-        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/pesquisa/"+termo,activity);
+        volley = new Volley(ctx,"https://terraviva.curitiba.br/api/pesquisa/"+termo);
         String[] items = {"id","nome","desc_curta","desc_longa","subcateg","valor","img","estoque","peso","altura","largura","comprimento"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -576,7 +578,7 @@ public class HomeManager {
 
         //definir tamanho listview
         ViewGroup.LayoutParams lp = list.getLayoutParams();
-        lp.height = getItemHeightofListView(list,produtos.size());
+        lp.height = getItemHeightofListView(list,produtos.size())/4+50;
         list.setLayoutParams(lp);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -598,7 +600,7 @@ public class HomeManager {
     // informa o sistema caso algum usuário tenha eventualmente comprado este produto e o estoque tenha se esgotado -
     // o sistema tem verificação antes de cada compra pra mostrar "indisponivel" se o estoque zerou)
     public void getEstoque(final Produto produto){
-        Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId(),activity);
+        Volley volley = new Volley(ctx,"https://terraviva.curitiba.br/api/produto/"+produto.getId());
         String[] items = {"estoque"};
         volley.getRequest(items, new VolleyCallback() {
             @Override
@@ -642,7 +644,7 @@ public class HomeManager {
         return grossElementHeight;
     }
 
-    private void initRecycler(List<Categoria> categorias){
+    public void initRecycler(List<Categoria> categorias){
         Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
 
         for(Categoria c : categorias){

@@ -4,7 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,7 +39,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
         HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
 
@@ -60,8 +68,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
          */
         manager.getCategorias();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
 
         //menu deslizante
@@ -108,6 +114,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         else if (id == R.id.nav_profile) {
             menuAction.partiuCadastro();
+        }
+        else if (id == R.id.nav_hist) {
+            Intent it = new Intent(this,HistoricoActivity.class);
+            startActivity(it);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -166,10 +176,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public boolean onClose() {
 
 
-                    TextView tv_titulo =  findViewById(R.id.tv_titulo);
-                    tv_titulo.setText("Destaques");
-                    HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
-                    manager.getDestaques();
+                TextView tv_titulo =  findViewById(R.id.tv_titulo);
+                tv_titulo.setText("Destaques");
+                HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
+                manager.getDestaques();
 
                 return false;
             }
@@ -181,11 +191,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                    TextView tv_titulo = findViewById(R.id.tv_titulo);
-                    tv_titulo.setText("Pesquisa para \"" + query + "\":");
-                    HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
-                    searchView.clearFocus();
-                    manager.getProdutosPesquisa(query);
+                TextView tv_titulo = findViewById(R.id.tv_titulo);
+                tv_titulo.setText("Pesquisa para \"" + query + "\":");
+                HomeManager manager = new HomeManager(getApplicationContext(),HomeActivity.this);
+                searchView.clearFocus();
+                manager.getProdutosPesquisa(query);
 
                 return false;
             }
@@ -208,6 +218,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             nav_Menu.findItem(R.id.nav_out).setVisible(false);
             nav_Menu.findItem(R.id.nav_cart).setVisible(false);
             nav_Menu.findItem(R.id.nav_profile).setVisible(false);
+            nav_Menu.findItem(R.id.nav_hist).setVisible(false);
             tv_welcome.setText("Bem vindo, Visitante!");
             tv_instructions.setText("Entre para acessar seu carrinho e efetuar compras ou pagamentos");
         }else{
